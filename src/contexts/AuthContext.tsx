@@ -366,9 +366,16 @@ export const AuthProvider = ({ children }) => {
     const logout = useCallback(() => {
         dispatch({ type: 'LOGOUT', isSigningOut: true });
 
-        // Revoke this device's token on the server (best effort; local sign-out happens regardless)
-        if (adapter && storage.getString('_driver_token')) {
-            adapter.post('auth/logout').catch(() => {});
+        // Go offline, then revoke this device's token on the server (best effort; the local
+        // sign-out happens regardless). The session token is captured first.
+        const sessionToken = storage.getString('_driver_token');
+        if (adapter && sessionToken) {
+            // The token is passed explicitly: the stored one is cleared below before these finish
+            const withToken = { headers: { Authorization: `Bearer ${sessionToken}` } };
+            adapter
+                .post('me/online', { online: false }, withToken)
+                .catch(() => {})
+                .finally(() => adapter.post('auth/logout', {}, withToken).catch(() => {}));
         }
 
         // Remove driver session
