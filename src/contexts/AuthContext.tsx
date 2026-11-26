@@ -247,6 +247,24 @@ export const AuthProvider = ({ children }) => {
         [fleetbase]
     );
 
+    // ShipCode: sign in with phone/email + password on /driver/v1 (no SMS)
+    const loginWithPassword = useCallback(
+        async (identity, password) => {
+            dispatch({ type: 'VERIFY', isVerifyingCode: true });
+            try {
+                const driver = await fleetbase.drivers.login(identity, password);
+                await createDriverSession(driver);
+                dispatch({ type: 'VERIFY', driver, isVerifyingCode: false });
+                return driver;
+            } catch (error) {
+                dispatch({ type: 'VERIFY', isVerifyingCode: false });
+                console.warn('[AuthContext] Password login failed:', error?.message);
+                throw error;
+            }
+        },
+        [fleetbase, setDriver]
+    );
+
     // Remove local session data
     const clearSessionData = () => {
         storage.removeItem('_driver_token');
@@ -345,6 +363,11 @@ export const AuthProvider = ({ children }) => {
     const logout = useCallback(() => {
         dispatch({ type: 'LOGOUT', isSigningOut: true });
 
+        // Revoke this device's token on the server (best effort; local sign-out happens regardless)
+        if (adapter && storage.getString('_driver_token')) {
+            adapter.post('auth/logout').catch(() => {});
+        }
+
         // Remove driver session
         setDriver(null);
 
@@ -357,7 +380,7 @@ export const AuthProvider = ({ children }) => {
         later(() => {
             dispatch({ type: 'LOGOUT', isSigningOut: false });
         });
-    }, [setDriver]);
+    }, [setDriver, adapter]);
 
     // // Sync device token if it changes
     // // Test on IOS before adding
@@ -392,6 +415,7 @@ export const AuthProvider = ({ children }) => {
             clearSessionData,
             setDriver,
             login,
+            loginWithPassword,
             verifyCode,
             logout,
             requestCreationCode,
@@ -404,6 +428,7 @@ export const AuthProvider = ({ children }) => {
         [
             state,
             login,
+            loginWithPassword,
             verifyCode,
             logout,
             loadOrganizations,

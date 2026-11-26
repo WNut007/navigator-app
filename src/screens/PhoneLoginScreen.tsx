@@ -4,7 +4,7 @@ import { SafeAreaView, Pressable, Keyboard, StyleSheet } from 'react-native';
 import { Spinner, Input, Stack, Text, YStack, useTheme, Button } from 'tamagui';
 import { toast, ToastPosition } from '@backpackapp-io/react-native-toast';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faPaperPlane, faKey, faArrowRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faRightToBracket, faArrowLeft, faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons';
 import { isValidPhoneNumber, navigatorConfig } from '../utils';
 import { useAuth } from '../contexts/AuthContext';
 import useAppTheme from '../hooks/use-app-theme';
@@ -15,11 +15,14 @@ const PhoneLoginScreen = () => {
     const navigation = useNavigation();
     const theme = useTheme();
     const { isDarkMode } = useAppTheme();
-    const { login, isSendingCode, phone: phoneState, loginMethod } = useAuth();
+    const { loginWithPassword, isVerifyingCode: isSigningIn, phone: phoneState } = useAuth();
     const [phone, setPhone] = useState(phoneState);
+    const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
-    const handleSendVerificationCode = async () => {
-        if (isSendingCode) {
+    // ShipCode: sign in with phone + password on the driver API (no SMS code)
+    const handleLogin = async () => {
+        if (isSigningIn) {
             return;
         }
 
@@ -27,9 +30,14 @@ const PhoneLoginScreen = () => {
             return toast.error('Invalid phone number provided.');
         }
 
+        if (!password) {
+            return toast.error('Please enter your password.');
+        }
+
+        Keyboard.dismiss();
         try {
-            await login(phone);
-            navigation.navigate('PhoneLoginVerify');
+            await loginWithPassword(phone, password);
+            // The navigator switches to the driver screens once the session exists
         } catch (error) {
             toast.error(error.message);
         }
@@ -49,13 +57,33 @@ const PhoneLoginScreen = () => {
             <YStack flex={1} alignItems='center' space='$3'>
                 <YStack space='$2' width='100%' px='$5' pt='$5'>
                     <Text color='$gray-200' fontWeight='bold' fontSize='$8' mb='$3'>
-                        Login via SMS
+                        Login
                     </Text>
                     <PhoneInput value={phone} onChange={(phoneNumber) => setPhone(phoneNumber)} />
-                    <Button size='$5' onPress={handleSendVerificationCode} bg='$primary' width='100%' opacity={isSendingCode ? 0.75 : 1} disabled={isSendingCode} rounded>
-                        <Button.Icon>{isSendingCode ? <Spinner color='$white' /> : <FontAwesomeIcon icon={faPaperPlane} color={'#fff'} />}</Button.Icon>
+                    <Stack position='relative' width='100%'>
+                        <Input
+                            size='$5'
+                            value={password}
+                            onChangeText={setPassword}
+                            placeholder='Password'
+                            secureTextEntry={!showPassword}
+                            autoCapitalize='none'
+                            autoCorrect={false}
+                            returnKeyType='go'
+                            onSubmitEditing={handleLogin}
+                            bg='$gray-200'
+                            color='$gray-900'
+                            borderWidth={0}
+                            pr='$7'
+                        />
+                        <Pressable onPress={() => setShowPassword((value) => !value)} style={{ position: 'absolute', right: 16, top: 0, bottom: 0, justifyContent: 'center' }}>
+                            <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} color={theme['$gray-600']?.val ?? '#666'} />
+                        </Pressable>
+                    </Stack>
+                    <Button size='$5' onPress={handleLogin} bg='$primary' width='100%' opacity={isSigningIn ? 0.75 : 1} disabled={isSigningIn} rounded>
+                        <Button.Icon>{isSigningIn ? <Spinner color='$white' /> : <FontAwesomeIcon icon={faRightToBracket} color={'#fff'} />}</Button.Icon>
                         <Button.Text color='$white' fontWeight='bold'>
-                            Send Verification Code
+                            Login
                         </Button.Text>
                     </Button>
                 </YStack>
