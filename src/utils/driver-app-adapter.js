@@ -1,4 +1,5 @@
 import { BrowserAdapter } from '@fleetbase/sdk';
+import { storage } from '../hooks/use-storage';
 
 /**
  * ShipCode: talks to the driver-scoped API (`/driver/v1`) instead of the public `/v1` API.
@@ -66,6 +67,28 @@ export default class DriverAppAdapter extends BrowserAdapter {
     }
 
     // --- Raw calls to /driver/v1 ----------------------------------------------------------------
+
+    /**
+     * Reads the session token at request time, not when the client was built: right after login
+     * the screens start loading before React has rebuilt the client with the new token.
+     */
+    request(path, method = 'GET', data = {}, options = {}) {
+        let token = null;
+        try {
+            token = storage.getString('_driver_token') || this.token;
+        } catch (error) {
+            token = this.token;
+        }
+
+        if (token) {
+            this.headers = { ...this.headers, Authorization: `Bearer ${token}` };
+        } else if (this.headers?.Authorization) {
+            const { Authorization, ...rest } = this.headers;
+            this.headers = rest;
+        }
+
+        return super.request(path, method, data, options);
+    }
 
     send(method, path, data = {}, options = {}) {
         switch (method) {

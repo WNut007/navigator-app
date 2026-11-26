@@ -295,8 +295,9 @@ export const AuthProvider = ({ children }) => {
     const createDriverSession = async (driver, callback = null) => {
         clearSessionData();
         // setDriverDefaultLocation(driver);
-        setDriver(driver);
+        // Token first: setDriver() makes the screens load orders right away
         setAuthToken(driver.token);
+        setDriver(driver);
 
         // run a callback with the driver instance
         const instance = new Driver(driver, adapter);
