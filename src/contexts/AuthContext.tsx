@@ -252,7 +252,9 @@ export const AuthProvider = ({ children }) => {
         async (identity, password) => {
             dispatch({ type: 'VERIFY', isVerifyingCode: true });
             try {
-                const driver = await fleetbase.drivers.login(identity, password);
+                // Not fleetbase.drivers.login(): the SDK sends any phone number down the SMS route
+                const { token, expires_at, driver: driverJson } = await adapter.post('auth/login', { identity, password });
+                const driver = new Driver({ ...driverJson, token, token_expires_at: expires_at }, adapter);
                 await createDriverSession(driver);
                 dispatch({ type: 'VERIFY', driver, isVerifyingCode: false });
                 return driver;
@@ -262,7 +264,7 @@ export const AuthProvider = ({ children }) => {
                 throw error;
             }
         },
-        [fleetbase, setDriver]
+        [fleetbase, adapter, setDriver]
     );
 
     // Remove local session data
