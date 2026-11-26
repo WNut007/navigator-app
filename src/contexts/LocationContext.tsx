@@ -98,11 +98,13 @@ export const LocationProvider = ({ children }) => {
         if (!adapter || !driver?.id || !authToken) return {};
 
         return {
-            url: `${adapter.host}/${adapter.namespace}/drivers/${driver.id}/track`,
+            // ShipCode: the native background uploader posts straight to the driver API (no JS adapter in between)
+            url: `${adapter.host}/driver/v1/location`,
             headers: {
                 Authorization: `Bearer ${authToken}`,
                 'Content-Type': 'application/json',
-                'User-Agent': '@fleetbase/navigator-app',
+                Accept: 'application/json',
+                'User-Agent': 'shipcode-driver-app (background)',
             },
             httpRootProperty: '.',
             locationTemplate:
