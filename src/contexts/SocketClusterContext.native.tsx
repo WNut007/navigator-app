@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import socketClusterClient from 'socketcluster-client';
+import { EventRegister } from 'react-native-event-listeners';
+import { storage } from '../hooks/use-storage';
 import { consumeAsyncIterator } from '../utils';
 import { useConfig } from './ConfigContext';
 
@@ -14,6 +16,8 @@ export const SocketClusterProvider = ({ children }) => {
     const [socket, setSocket] = useState(null);
     const [isConnected, setIsConnected] = useState(false);
     const [error, setError] = useState(null);
+    // Resolves once the socket has tried to sign in for this session (subscriptions wait for it)
+    const authReadyRef = useRef<Promise<void>>(Promise.resolve());
 
     useEffect(() => {
         // Initialize the socket connection
@@ -26,10 +30,56 @@ export const SocketClusterProvider = ({ children }) => {
 
         const scSocket = socketClusterClient.create(options);
 
+        // ShipCode: with socket auth on, channels are only open to a signed socket token.
+        // The driver gets one from /driver/v1/socket/token; it lets them subscribe to their own
+        // channels (driver, vehicle, assigned orders). 404 means socket auth is off: stay anonymous.
+        let refreshTimer = null;
+        let disposed = false;
+        const authenticate = async () => {
+            clearTimeout(refreshTimer);
+            const sessionToken = storage.getString('_driver_token');
+            const host = resolveConnectionConfig('FLEETBASE_HOST');
+
+            if (!sessionToken || !host) {
+                if (scSocket.authState === 'authenticated') {
+                    await scSocket.deauthenticate().catch(() => {});
+                }
+                return;
+            }
+
+            try {
+                const response = await fetch(`${host}/driver/v1/socket/token`, {
+                    method: 'POST',
+                    headers: { Authorization: `Bearer ${sessionToken}`, Accept: 'application/json', 'User-Agent': 'shipcode-driver-app' },
+                });
+                if (!response.ok) {
+                    return;
+                }
+
+                const { token, expires_in } = await response.json();
+                if (disposed || !token) return;
+                await scSocket.authenticate(token);
+
+                // Renew before it expires (socket tokens are short-lived)
+                const refreshInMs = Math.max(30, Number(expires_in || 300) * 0.8) * 1000;
+                refreshTimer = setTimeout(() => {
+                    authReadyRef.current = authenticate();
+                }, refreshInMs);
+            } catch (err) {
+                console.warn('[Socket] could not sign in to the socket server:', err?.message ?? err);
+            }
+        };
+
+        // Sign in again whenever the driver session changes (login / logout)
+        const driverListener = EventRegister.addEventListener('driver.updated', () => {
+            authReadyRef.current = authenticate();
+        });
+
         // Define handlers for socket events
         const handleConnect = () => {
             setIsConnected(true);
             console.log('Socket connected.');
+            authReadyRef.current = authenticate();
         };
 
         const handleDisconnect = () => {
@@ -60,6 +110,9 @@ export const SocketClusterProvider = ({ children }) => {
             stopConnect();
             stopDisconnect();
             stopError();
+            disposed = true;
+            clearTimeout(refreshTimer);
+            if (typeof driverListener === 'string') EventRegister.removeEventListener(driverListener);
 
             scSocket.disconnect();
             console.log('Socket connection closed.');
@@ -79,6 +132,9 @@ export const SocketClusterProvider = ({ children }) => {
             }
 
             try {
+                // Wait (up to 5 s) for the socket to sign in, else the server refuses the channel
+                await Promise.race([authReadyRef.current?.catch?.(() => {}), new Promise((resolve) => setTimeout(resolve, 5000))]);
+
                 const channel = socket.subscribe(channelName);
                 if (channel.isSubscribed()) {
                     console.log(`Already subscribed to channel "${channelName}".`);

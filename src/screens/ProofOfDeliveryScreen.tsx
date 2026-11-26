@@ -5,6 +5,7 @@ import { Order, Place } from '@fleetbase/sdk';
 import { titleize } from 'inflected';
 import { SectionHeader, SectionInfoLine } from '../components/Content';
 import { isNone, resizePhoto } from '../utils';
+import RNFS from 'react-native-fs';
 import { toast } from '../utils/toast';
 import { useTempStore } from '../contexts/TempStoreContext';
 import useDimensions from '../hooks/use-dimensions';
@@ -84,27 +85,20 @@ const ProofOfDeliveryScreen = ({ route }) => {
             setIsLoading(true);
 
             // Resize all photos first in parallel
-            const resizedPhotos = await Promise.all(
-                photos.map(async (p) => {
-                    const smallUri = await resizePhoto(p.uri);
-                    // const smallBase64 = await RNFS.readFile(smallUri, 'base64');
-                    // return { uri: smallUri, base64: smallBase64 };
-
-                    return { uri: smallUri };
-                })
-            );
-
-            const form = new FormData();
-            resizedPhotos.forEach((p, i) => {
-                form.append(`photos[${i}]`, {
-                    uri: p.uri,
-                    name: `photo-${i}.jpg`,
-                    type: 'image/jpeg',
-                });
-            });
-
             try {
-                const proof = await adapter.post(`orders/${order.id}/capture-photo`, form, { headers: { 'Content-Type': 'multipart/form-data' } });
+                // ShipCode: /driver/v1 takes photos as JPEG data URLs in JSON (resized to ≤1024 px first)
+                const dataUrls = await Promise.all(
+                    photos.map(async (p) => {
+                        const smallUri = await resizePhoto(p.uri);
+                        const path = String(smallUri).replace(/^file:\/\//, '');
+                        const base64 = await RNFS.readFile(path, 'base64');
+                        return `data:image/jpeg;base64,${base64}`;
+                    })
+                );
+
+                // Same subject as the signature/QR proofs: the entity or waypoint, none for the whole order
+                const subjectId = subject?.id && subject.id !== order.id ? subject.id : null;
+                const proof = await adapter.post(`orders/${order.id}/capture-photo${subjectId ? `/${subjectId}` : ''}`, { photos: dataUrls });
                 setValue('proof', { proof, activity, order: order.id, waypoint: waypoint?.id, entity: entity?.id });
                 navigation.goBack();
             } catch (err) {
