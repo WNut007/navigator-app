@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
+import { AppState } from 'react-native';
 import socketClusterClient from 'socketcluster-client';
 import { EventRegister } from 'react-native-event-listeners';
 import { storage } from '../hooks/use-storage';
@@ -18,6 +19,9 @@ export const SocketClusterProvider = ({ children }) => {
     const [error, setError] = useState(null);
     // Resolves once the socket has tried to sign in for this session (subscriptions wait for it)
     const authReadyRef = useRef<Promise<void>>(Promise.resolve());
+    // Channels the screens want; re-subscribed after the socket signs in again (token renewal,
+    // server kick-out on expiry, app back in the foreground)
+    const wantedChannelsRef = useRef<Set<string>>(new Set());
 
     useEffect(() => {
         // Initialize the socket connection
@@ -35,6 +39,15 @@ export const SocketClusterProvider = ({ children }) => {
         // channels (driver, vehicle, assigned orders). 404 means socket auth is off: stay anonymous.
         let refreshTimer = null;
         let disposed = false;
+        let tokenExpiresAt = 0;
+
+        const resubscribeWanted = () => {
+            wantedChannelsRef.current.forEach((name) => {
+                if (!scSocket.isSubscribed(name, true)) {
+                    scSocket.subscribe(name);
+                }
+            });
+        };
         const authenticate = async () => {
             clearTimeout(refreshTimer);
             const sessionToken = storage.getString('_driver_token');
@@ -59,6 +72,8 @@ export const SocketClusterProvider = ({ children }) => {
                 const { token, expires_in } = await response.json();
                 if (disposed || !token) return;
                 await scSocket.authenticate(token);
+                tokenExpiresAt = Date.now() + Number(expires_in || 300) * 1000;
+                resubscribeWanted();
 
                 // Renew before it expires (socket tokens are short-lived)
                 const refreshInMs = Math.max(30, Number(expires_in || 300) * 0.8) * 1000;
@@ -69,6 +84,22 @@ export const SocketClusterProvider = ({ children }) => {
                 console.warn('[Socket] could not sign in to the socket server:', err?.message ?? err);
             }
         };
+
+        // JS timers don't run while the app is in the background, so the renewal can be missed:
+        // the server then kicks the channels out (token_expired). Sign in again and resubscribe.
+        const kickOutListener = scSocket.listener('kickOut');
+        const stopKickOut = consumeAsyncIterator(
+            kickOutListener,
+            () => {
+                authReadyRef.current = authenticate();
+            },
+            () => {}
+        );
+        const appStateSubscription = AppState.addEventListener('change', (state) => {
+            if (state === 'active' && storage.getString('_driver_token') && Date.now() > tokenExpiresAt - 60000) {
+                authReadyRef.current = authenticate();
+            }
+        });
 
         // Sign in again whenever the driver session changes (login / logout)
         const driverListener = EventRegister.addEventListener('driver.updated', () => {
@@ -112,6 +143,8 @@ export const SocketClusterProvider = ({ children }) => {
             stopError();
             disposed = true;
             clearTimeout(refreshTimer);
+            stopKickOut();
+            appStateSubscription?.remove?.();
             if (typeof driverListener === 'string') EventRegister.removeEventListener(driverListener);
 
             scSocket.disconnect();
@@ -135,6 +168,7 @@ export const SocketClusterProvider = ({ children }) => {
                 // Wait (up to 5 s) for the socket to sign in, else the server refuses the channel
                 await Promise.race([authReadyRef.current?.catch?.(() => {}), new Promise((resolve) => setTimeout(resolve, 5000))]);
 
+                wantedChannelsRef.current.add(channelName);
                 const channel = socket.subscribe(channelName);
                 if (channel.isSubscribed()) {
                     console.log(`Already subscribed to channel "${channelName}".`);
@@ -164,6 +198,7 @@ export const SocketClusterProvider = ({ children }) => {
             }
 
             try {
+                wantedChannelsRef.current.delete(channelName);
                 await socket.closeChannel(channelName);
                 console.log(`Gracefully closed channel "${channelName}".`);
             } catch (err) {
@@ -185,6 +220,7 @@ export const SocketClusterProvider = ({ children }) => {
             }
 
             try {
+                wantedChannelsRef.current.delete(channelName);
                 await socket.killChannel(channelName);
                 console.log(`Forcefully killed channel "${channelName}".`);
             } catch (err) {
@@ -204,6 +240,7 @@ export const SocketClusterProvider = ({ children }) => {
         }
 
         try {
+            wantedChannelsRef.current.clear();
             await socket.closeAllChannels();
             console.log('Gracefully closed all channels.');
         } catch (err) {
@@ -221,6 +258,7 @@ export const SocketClusterProvider = ({ children }) => {
         }
 
         try {
+            wantedChannelsRef.current.clear();
             await socket.killAllChannels();
             console.log('Forcefully killed all channels.');
         } catch (err) {
