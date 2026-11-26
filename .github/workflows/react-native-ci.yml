@@ -66,6 +66,7 @@ jobs:
                   echo "APP_NAME=Navigator" > .env
                   echo "APP_IDENTIFIER=io.fleetbase.navigator" >> .env
                   echo "APP_LINK_PREFIX=flbnavigator" >> .env
+                  echo "DEFAULT_COORDINATES=13.7563,100.5018" >> .env
                   echo "FLEETBASE_KEY=${{ secrets.FLEETBASE_KEY || 'flb_unset_use_instance_link' }}" >> .env
                   echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env
                   echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
@@ -120,6 +121,7 @@ jobs:
                   echo "APP_NAME=Navigator" > .env
                   echo "APP_IDENTIFIER=io.fleetbase.navigator" >> .env
                   echo "APP_LINK_PREFIX=flbnavigator" >> .env
+                  echo "DEFAULT_COORDINATES=13.7563,100.5018" >> .env
                   echo "FLEETBASE_KEY=${{ secrets.FLEETBASE_KEY || 'flb_unset_use_instance_link' }}" >> .env
                   echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env
                   echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
@@ -200,7 +202,7 @@ jobs:
             - name: Build Android Debug APK
               run: |
                   cd android
-                  ./gradlew assembleDebug --no-daemon --stacktrace
+                  ./gradlew assembleDebug --no-daemon --stacktrace -PreactNativeArchitectures=x86_64,arm64-v8a
 
             - name: Upload Android APK
               uses: actions/upload-artifact@v6
@@ -262,6 +264,7 @@ jobs:
                   echo "APP_NAME=Navigator" > .env
                   echo "APP_IDENTIFIER=io.fleetbase.navigator" >> .env
                   echo "APP_LINK_PREFIX=flbnavigator" >> .env
+                  echo "DEFAULT_COORDINATES=13.7563,100.5018" >> .env
                   echo "FLEETBASE_KEY=${{ secrets.FLEETBASE_KEY || 'flb_unset_use_instance_link' }}" >> .env
                   echo "GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }}" >> .env
                   echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env

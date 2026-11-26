@@ -5,7 +5,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBuilding, faTruck } from '@fortawesome/free-solid-svg-icons';
 import { Driver, Place } from '@fleetbase/sdk';
 import { useLocation } from '../contexts/LocationContext';
-import { restoreFleetbasePlace, getCoordinates } from '../utils/location';
+import { restoreFleetbasePlace, getCoordinates, getDefaultCoordinates } from '../utils/location';
+import MapErrorBoundary from './MapErrorBoundary';
 import { config, last, first } from '../utils';
 import { formattedAddressFromPlace } from '../utils/location';
 import { toast } from '../utils/toast';
@@ -33,9 +34,23 @@ const calculateOffset = (zoomLevel) => {
     };
 };
 
+// A coordinate is usable only if both parts are finite numbers and it isn't the 0,0 "no location" placeholder
+const isValidCoordinate = (coordinate) => {
+    if (!coordinate) return false;
+    const latitude = Number(coordinate.latitude);
+    const longitude = Number(coordinate.longitude);
+    return Number.isFinite(latitude) && Number.isFinite(longitude) && !(latitude === 0 && longitude === 0);
+};
+
+// Returns null instead of throwing when a place has no (valid) location
 const getPlaceCoords = (place) => {
-    const [latitude, longitude] = getCoordinates(place);
-    return { latitude, longitude };
+    try {
+        const [latitude, longitude] = getCoordinates(place);
+        const coordinate = { latitude: Number(latitude), longitude: Number(longitude) };
+        return isValidCoordinate(coordinate) ? coordinate : null;
+    } catch (error) {
+        return null;
+    }
 };
 
 // Reusable marker label component
@@ -54,7 +69,7 @@ const MarkerLabel = ({ label, markerOffset, theme, icon }) => (
     </YStack>
 );
 
-const LiveOrderRoute = ({
+const LiveOrderRouteMap = ({
     children,
     order,
     zoom = 1,
@@ -101,21 +116,38 @@ const LiveOrderRoute = ({
     const destination = getPlaceCoords(end);
 
     // Get only the "middle" waypoints (excluding the first and last ones)
-    const middleWaypoints = focusCurrentDestination ? [] : waypoints.slice(1, -1).map((waypoint) => ({ coordinate: getPlaceCoords(waypoint), ...waypoint }));
+    const middleWaypoints = focusCurrentDestination ? [] : waypoints
+              .slice(1, -1)
+              .map((waypoint) => ({ ...waypoint, coordinate: getPlaceCoords(waypoint) }))
+              .filter((waypoint) => waypoint.coordinate);
 
     // Adjust marker size if a bunch of middle waypoints
-    markerSize = middleWaypoints.length > 0 ? (middleWaypoints > 3 ? 'xxs' : 'xs') : markerSize;
+    markerSize = middleWaypoints.length > 0 ? (middleWaypoints.length > 3 ? 'xxs' : 'xs') : markerSize;
 
     // Initial map props
     const initialDeltas = calculateDeltas(zoom);
+    const fallbackCoordinate = useMemo(() => {
+        const { latitude, longitude } = getDefaultCoordinates();
+        return { latitude: Number(latitude), longitude: Number(longitude) };
+    }, []);
     const [mapRegion, setMapRegion] = useState({
-        ...origin,
+        ...(origin ?? destination ?? fallbackCoordinate),
         latitudeDelta: initialDeltas,
         longitudeDelta: initialDeltas,
     });
     const [zoomLevel, setZoomLevel] = useState(calculateZoomLevel(initialDeltas));
     const markerOffset = calculateOffset(zoomLevel);
-    const driverAssigned = order.getAttribute('driver_assigned') ? new Driver(order.getAttribute('driver_assigned')) : null;
+    const driverAssignedData = order.getAttribute('driver_assigned');
+    let driverAssigned = null;
+    try {
+        driverAssigned = driverAssignedData ? new Driver(driverAssignedData) : null;
+        // A driver who has never sent a location has no usable coordinates: skip the marker
+        if (driverAssigned && !isValidCoordinate({ latitude: driverAssigned.latitude, longitude: driverAssigned.longitude })) {
+            driverAssigned = null;
+        }
+    } catch (error) {
+        driverAssigned = null;
+    }
 
     const handleRegionChangeComplete = (region) => {
         setMapRegion(region);
@@ -124,6 +156,7 @@ const LiveOrderRoute = ({
     };
 
     const fitToRoute = ({ coordinates }) => {
+        if (!mapRef.current || !Array.isArray(coordinates) || coordinates.length === 0) return;
         mapRef.current.fitToCoordinates(coordinates, {
             edgePadding: { top: edgePaddingTop, right: edgePaddingRight, bottom: edgePaddingBottom, left: edgePaddingLeft },
             animated: true,
@@ -132,6 +165,7 @@ const LiveOrderRoute = ({
 
     const focusDriver = ({ coordinates }) => {
         // Note: latitude and longitude should be derived from coordinates
+        if (!mapRef.current || !isValidCoordinate(coordinates)) return;
         const { latitude, longitude } = coordinates;
         mapRef.current.animateToRegion(
             {
@@ -155,7 +189,7 @@ const LiveOrderRoute = ({
                 {...mapViewProps}
             >
                 {driverAssigned && <DriverMarker driver={driverAssigned} onMovement={focusDriver} />}
-                {start && start?.id !== 'driver' && (
+                {start && origin && start?.id !== 'driver' && (
                     <Marker coordinate={origin} centerOffset={markerOffset}>
                         <MarkerLabel icon={start?.id === 'driver' ? faTruck : null} label={formattedAddressFromPlace(start)} markerOffset={markerOffset} theme={theme} />
                         <LocationMarker size={markerSize} />
@@ -167,10 +201,12 @@ const LiveOrderRoute = ({
                         <LocationMarker size={markerSize} />
                     </Marker>
                 ))}
-                <Marker coordinate={destination} centerOffset={markerOffset}>
-                    <MarkerLabel label={formattedAddressFromPlace(end)} markerOffset={{ width: 0, height: 5 }} theme={theme} />
-                    <LocationMarker size={markerSize} />
-                </Marker>
+                {destination && (
+                    <Marker coordinate={destination} centerOffset={markerOffset}>
+                        <MarkerLabel label={formattedAddressFromPlace(end)} markerOffset={{ width: 0, height: 5 }} theme={theme} />
+                        <LocationMarker size={markerSize} />
+                    </Marker>
+                )}
 
                 {origin && destination && (
                     <MapViewDirections
@@ -191,5 +227,12 @@ const LiveOrderRoute = ({
         </YStack>
     );
 };
+
+// The map is decoration on cards and the order screen: if it fails, show a placeholder instead of crashing the screen
+const LiveOrderRoute = (props) => (
+    <MapErrorBoundary width={props.width} height={props.height}>
+        <LiveOrderRouteMap {...props} />
+    </MapErrorBoundary>
+);
 
 export default LiveOrderRoute;
