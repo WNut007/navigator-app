@@ -30,7 +30,7 @@ const countryList = Object.entries(countries).map(([code, details]) => ({
     emoji: getEmojiFlag(code),
 }));
 
-const PhoneInput = ({ value, onChange, bg, width = '100%', defaultCountryCode = 'US', size = '$5', wrapperProps = {} }) => {
+const PhoneInput = ({ value, onChange, bg, width = '100%', defaultCountryCode = 'TH', size = '$5', wrapperProps = {} }) => {
     const defaultValue = getDefaultValues(value, defaultCountryCode);
     const theme = useTheme();
     const { isDarkMode } = useAppTheme();
@@ -73,7 +73,9 @@ const PhoneInput = ({ value, onChange, bg, width = '100%', defaultCountryCode = 
 
     useEffect(() => {
         if (onChange) {
-            const combinedValue = `+${selectedCountry.phone}${phoneNumber}`;
+            // Local numbers are typed with a leading trunk 0 (Thai 081...): drop it after the country code
+            const nationalNumber = String(phoneNumber ?? '').replace(/[\s\-()]/g, '').replace(/^0+/, '');
+            const combinedValue = `+${selectedCountry.phone}${nationalNumber}`;
             onChange(combinedValue, phoneNumber, selectedCountry);
         }
     }, [selectedCountry, phoneNumber, onChange]);
