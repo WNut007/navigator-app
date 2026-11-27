@@ -191,6 +191,26 @@ const LiveOrderRouteMap = ({
     // the map's first layout also counts as ready.
     const [mapUsable, setMapUsable] = useState(false);
     const routeKey = JSON.stringify(straightRoute);
+
+    // Region covering every stop. Android applies initialRegion when the map finishes loading,
+    // which can be after an early fit and would undo it, so the initial region itself is the trip.
+    const tripRegion = useMemo(() => {
+        if (straightRoute.length < 2) return null;
+        const lats = straightRoute.map((stop) => stop.latitude);
+        const lngs = straightRoute.map((stop) => stop.longitude);
+        const [minLat, maxLat, minLng, maxLng] = [Math.min(...lats), Math.max(...lats), Math.min(...lngs), Math.max(...lngs)];
+        return {
+            latitude: (minLat + maxLat) / 2,
+            longitude: (minLng + maxLng) / 2,
+            latitudeDelta: Math.max((maxLat - minLat) * 1.6, 0.01),
+            longitudeDelta: Math.max((maxLng - minLng) * 1.6, 0.01),
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [routeKey]);
+    const initialRegionRef = useRef(null);
+    if (!initialRegionRef.current && tripRegion) {
+        initialRegionRef.current = tripRegion;
+    }
     useEffect(() => {
         if (!mapUsable || hasDirectionsKey || straightRoute.length < 2) return;
         const timer = setTimeout(() => {
@@ -221,10 +241,14 @@ const LiveOrderRouteMap = ({
             <MapView
                 ref={mapRef}
                 style={{ ...StyleSheet.absoluteFillObject, width: '100%', height: '100%' }}
-                initialRegion={mapRegion}
+                initialRegion={initialRegionRef.current ?? mapRegion}
                 onRegionChangeComplete={handleRegionChangeComplete}
                 scrollEnabled={scrollEnabled}
                 onMapReady={() => setMapUsable(true)}
+                onMapLoaded={() => {
+                    // Last word after Android applied initialRegion on load
+                    if (!hasDirectionsKey && straightRoute.length > 1) fitToRoute({ coordinates: straightRoute });
+                }}
                 onLayout={(event) => {
                     if (event?.nativeEvent?.layout?.width > 0) setMapUsable(true);
                 }}
