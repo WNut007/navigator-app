@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform, PixelRatio } from 'react-native';
 import { Text, YStack, XStack, useTheme } from 'tamagui';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBuilding, faTruck } from '@fortawesome/free-solid-svg-icons';
@@ -162,7 +162,6 @@ const LiveOrderRouteMap = ({
     }
 
     const handleRegionChangeComplete = (region) => {
-        dbg('regionChangeComplete', JSON.stringify(region));
         setMapRegion(region);
         const newZoomLevel = calculateZoomLevel(region.latitudeDelta);
         setZoomLevel(newZoomLevel);
@@ -181,8 +180,10 @@ const LiveOrderRouteMap = ({
 
     const fitToRoute = ({ coordinates }) => {
         if (!mapRef.current || !Array.isArray(coordinates) || coordinates.length === 0) return;
+        // react-native-maps reads edgePadding as physical pixels on Android, as points on iOS
+        const px = (value) => (Platform.OS === 'android' ? PixelRatio.getPixelSizeForLayoutSize(value) : value);
         mapRef.current.fitToCoordinates(coordinates, {
-            edgePadding: { top: edgePaddingTop, right: edgePaddingRight, bottom: edgePaddingBottom, left: edgePaddingLeft },
+            edgePadding: { top: px(edgePaddingTop), right: px(edgePaddingRight), bottom: px(edgePaddingBottom), left: px(edgePaddingLeft) },
             animated: true,
         });
     };
@@ -193,18 +194,6 @@ const LiveOrderRouteMap = ({
     const [mapUsable, setMapUsable] = useState(false);
     const routeKey = JSON.stringify(straightRoute);
 
-    // TEMP diagnostics for the trip fit (remove once the map opens on the whole trip)
-    const mountIdRef = useRef(Math.random().toString(36).slice(2, 6));
-    const dbg = (...args) => console.log(`[LiveOrderRoute ${mountIdRef.current}]`, ...args);
-    useEffect(() => {
-        dbg('mount');
-        return () => dbg('unmount');
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-    useEffect(() => {
-        dbg('stops', JSON.stringify({ origin, destination, middle: middleWaypoints.length, usable: mapUsable }));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [routeKey, mapUsable]);
 
     // Region covering every stop. Android applies initialRegion when the map finishes loading,
     // which can be after an early fit and would undo it, so the initial region itself is the trip.
@@ -228,7 +217,6 @@ const LiveOrderRouteMap = ({
     useEffect(() => {
         if (!mapUsable || hasDirectionsKey || straightRoute.length < 2) return;
         const timer = setTimeout(() => {
-            dbg('fit to', straightRoute.length, 'stops', 'mapRef', Boolean(mapRef.current));
             fitToRoute({ coordinates: straightRoute });
         }, 400);
         return () => clearTimeout(timer);
@@ -258,17 +246,12 @@ const LiveOrderRouteMap = ({
                 initialRegion={initialRegionRef.current ?? mapRegion}
                 onRegionChangeComplete={handleRegionChangeComplete}
                 scrollEnabled={scrollEnabled}
-                onMapReady={() => {
-                    dbg('onMapReady');
-                    setMapUsable(true);
-                }}
+                onMapReady={() => setMapUsable(true)}
                 onMapLoaded={() => {
-                    dbg('onMapLoaded', straightRoute.length, 'stops');
                     // Last word after Android applied initialRegion on load
                     if (!hasDirectionsKey && straightRoute.length > 1) fitToRoute({ coordinates: straightRoute });
                 }}
                 onLayout={(event) => {
-                    dbg('onLayout', JSON.stringify(event?.nativeEvent?.layout));
                     if (event?.nativeEvent?.layout?.width > 0) setMapUsable(true);
                 }}
                 {...mapViewProps}

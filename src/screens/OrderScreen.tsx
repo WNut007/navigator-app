@@ -73,6 +73,8 @@ const OrderScreen = ({ route }) => {
     const { updateStorageOrder, setDimissedOrders } = useOrderManager();
     const { store, removeValue } = useTempStore();
     const [order, setOrder] = useState(new Order(params.order, adapter));
+    // Height of the order header drawn over the top of the map (the map fits the trip below it)
+    const [mapHeaderHeight, setMapHeaderHeight] = useState(90);
     const [activityLoading, setActivityLoading] = useState();
     const [distanceMatrix, setDistanceMatrix] = useState();
     const [nextActivity, setNextActivity] = useState([]);
@@ -491,7 +493,7 @@ const OrderScreen = ({ route }) => {
                 refreshControl={<RefreshControl refreshing={isLoading('isReloading')} onRefresh={reloadOrder} tintColor={theme['$blue-500'].val} />}
             >
                 <YStack position='relative' width='100%' height={350} borderBottomWidth={0} borderColor='$borderColorWithShadow'>
-                    <YStack position='absolute' top={0} left={0} right={0} zIndex={1}>
+                    <YStack position='absolute' top={0} left={0} right={0} zIndex={1} onLayout={(event) => setMapHeaderHeight(event.nativeEvent.layout.height)}>
                         <XStack bg='$info' borderBottomWidth={1} borderColor='$infoBorder' padding='$3' space='$2'>
                             <YStack>
                                 <Image
@@ -521,7 +523,8 @@ const OrderScreen = ({ route }) => {
                     <LiveOrderRoute
                         order={order}
                         zoom={4}
-                        edgePaddingTop={80}
+                        // The order header covers the top of the map: keep the stops below it
+                        edgePaddingTop={mapHeaderHeight + 32}
                         edgePaddingBottom={30}
                         edgePaddingLeft={30}
                         edgePaddingRight={30}
