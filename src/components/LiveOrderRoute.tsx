@@ -130,10 +130,22 @@ const LiveOrderRouteMap = ({
         const { latitude, longitude } = getDefaultCoordinates();
         return { latitude: Number(latitude), longitude: Number(longitude) };
     }, []);
-    const [mapRegion, setMapRegion] = useState({
-        ...(origin ?? destination ?? fallbackCoordinate),
-        latitudeDelta: initialDeltas,
-        longitudeDelta: initialDeltas,
+    // Open on the whole trip: a region covering every stop (with margin), not just the first stop
+    const [mapRegion, setMapRegion] = useState(() => {
+        const stops = [origin, ...middleWaypoints.map(({ coordinate }) => coordinate), destination].filter(Boolean);
+        if (stops.length < 2) {
+            return { ...(origin ?? destination ?? fallbackCoordinate), latitudeDelta: initialDeltas, longitudeDelta: initialDeltas };
+        }
+        const lats = stops.map((stop) => stop.latitude);
+        const lngs = stops.map((stop) => stop.longitude);
+        const [minLat, maxLat, minLng, maxLng] = [Math.min(...lats), Math.max(...lats), Math.min(...lngs), Math.max(...lngs)];
+        return {
+            latitude: (minLat + maxLat) / 2,
+            longitude: (minLng + maxLng) / 2,
+            // 1.6x leaves room for the markers and labels at the edges
+            latitudeDelta: Math.max((maxLat - minLat) * 1.6, 0.01),
+            longitudeDelta: Math.max((maxLng - minLng) * 1.6, 0.01),
+        };
     });
     const [zoomLevel, setZoomLevel] = useState(calculateZoomLevel(initialDeltas));
     const markerOffset = calculateOffset(zoomLevel);
@@ -198,7 +210,8 @@ const LiveOrderRouteMap = ({
                 onRegionChangeComplete={handleRegionChangeComplete}
                 scrollEnabled={scrollEnabled}
                 onMapReady={() => {
-                    if (!hasDirectionsKey && straightRoute.length > 1) fitToRoute({ coordinates: straightRoute });
+                    // Fit again once the map has its real size (the first layout can still be 0 px)
+                    if (!hasDirectionsKey && straightRoute.length > 1) setTimeout(() => fitToRoute({ coordinates: straightRoute }), 300);
                 }}
                 {...mapViewProps}
             >
