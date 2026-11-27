@@ -9,7 +9,6 @@ import useFleetbase from '../hooks/use-fleetbase';
 import useOrderResource from '../hooks/use-order-resource';
 import useAppTheme from '../hooks/use-app-theme';
 import OrderProgressBar from './OrderProgressBar';
-import LiveOrderRoute from './LiveOrderRoute';
 import OrderWaypointList from './OrderWaypointList';
 import MultipleCustomerAvatars from './MultipleCustomerAvatars';
 import LoadingText from './LoadingText';
@@ -52,20 +51,8 @@ export const OrderCard = ({ order, onPress }) => {
                     </XStack>
                 </XStack>
                 <YStack px='$3' pb='$1' gap='$3'>
-                    <YStack>
-                        <LiveOrderRoute
-                            order={order}
-                            zoom={7}
-                            height={150}
-                            edgePaddingTop={70}
-                            edgePaddingBottom={30}
-                            edgePaddingLeft={30}
-                            edgePaddingRight={30}
-                            width='100%'
-                            borderRadius='$4'
-                            scrollEnabled={false}
-                        />
-                    </YStack>
+                    {/* ShipCode: no live map per card — a map per row made the list heavy (and blank without a
+                        Maps key); the route is on the order screen */}
                     <YStack>
                         <OrderWaypointList order={order} />
                     </YStack>

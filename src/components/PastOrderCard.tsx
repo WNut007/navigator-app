@@ -10,7 +10,6 @@ import useFleetbase from '../hooks/use-fleetbase';
 import useOrderResource from '../hooks/use-order-resource';
 import useAppTheme from '../hooks/use-app-theme';
 import OrderProgressBar from './OrderProgressBar';
-import LiveOrderRoute from './LiveOrderRoute';
 import OrderWaypointList, { WaypointItem } from './OrderWaypointList';
 import MultipleCustomerAvatars from './MultipleCustomerAvatars';
 import LoadingText from './LoadingText';
@@ -36,24 +35,8 @@ export const PastOrderCard = ({ order, onPress }) => {
     return (
         <Pressable onPress={onPress}>
             <YStack bg='$background' borderRadius='$4' borderWidth={1} borderColor={isDarkMode ? '$borderColor' : '$borderColorWithShadow'}>
-                <YStack height={150} mb='$3' borderBottomWidth={1} borderColor={isDarkMode ? '$background' : '$borderColorWithShadow'}>
-                    <LiveOrderRoute
-                        order={order}
-                        focusCurrentDestination={true}
-                        zoom={7}
-                        height={150}
-                        edgePaddingTop={70}
-                        edgePaddingBottom={30}
-                        edgePaddingLeft={30}
-                        edgePaddingRight={30}
-                        width='100%'
-                        borderRadius='$4'
-                        borderBottomLeftRadius={0}
-                        borderBottomRightRadius={0}
-                        scrollEnabled={false}
-                    />
-                </YStack>
-                <YStack flex={1} borderRadius='$4'>
+                {/* ShipCode: no live map per card (see OrderCard) */}
+                <YStack flex={1} borderRadius='$4' pt='$3'>
                     <XStack bg='$background' alignItems='center' justifyContent='space-between' px='$2' mb='$3'>
                         <XStack flex={1} gap='$2'>
                             <XStack borderRadius='$4' width={34} height={34} bg={isDarkMode ? '$info' : '$blue-600'} alignItems='center' justifyContent='center'>
