@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { FlatList, RefreshControl, Platform } from 'react-native';
 import { Text, YStack, XStack, Separator, useTheme } from 'tamagui';
@@ -38,8 +38,9 @@ const sumDistance = (orders = []) =>
         return total + order.getAttribute('distance');
     }, 0);
 
-const REFRESH_NEARBY_ORDERS_MS = 6000 * 5; // 5 mins
-const REFRESH_ORDERS_MS = 6000 * 15; // 15 mins
+// Upstream had 6000 * n here, i.e. every 30 s / 90 s instead of the minutes the names say
+const REFRESH_NEARBY_ORDERS_MS = 60000 * 5; // 5 mins
+const REFRESH_ORDERS_MS = 60000 * 15; // 15 mins
 const DriverOrderManagementScreen = () => {
     const theme = useTheme();
     const navigation = useNavigation();
@@ -62,6 +63,8 @@ const DriverOrderManagementScreen = () => {
         dismissedOrders,
         setDimissedOrders,
     } = useOrderManager();
+    // Same array between renders unless the orders changed (a new array each render resets the list)
+    const listData = useMemo(() => [...nearbyOrders, ...currentOrders], [nearbyOrders, currentOrders]);
     const { listen } = useSocketClusterClient();
     const { addNotificationListener, removeNotificationListener } = useNotification();
     const startingDate = subDays(new Date(currentDate), 2);
@@ -97,8 +100,11 @@ const DriverOrderManagementScreen = () => {
                 reloadNearbyOrders({}, { setLoadingFlag: false });
             };
 
-            const interval = setInterval(handleReloadNearbyOrders, REFRESH_NEARBY_ORDERS_MS);
-            return () => clearInterval(interval);
+            // ShipCode: the driver API has no nearby (ad-hoc) orders, so don't poll for them: each
+            // empty reload re-rendered the list and made it jump back while scrolling
+            void handleReloadNearbyOrders;
+            void REFRESH_NEARBY_ORDERS_MS;
+            return () => {};
         }, [])
     );
 
@@ -288,7 +294,7 @@ const DriverOrderManagementScreen = () => {
                 </XStack>
             </YStack>
             <FlatList
-                data={[...nearbyOrders, ...currentOrders]}
+                data={listData}
                 keyExtractor={(order, index) => order.id.toString() + '_' + index}
                 renderItem={renderOrder}
                 refreshControl={<RefreshControl refreshing={isFetchingCurrentOrders} onRefresh={reloadCurrentOrders} tintColor={theme['$blue-500'].val} />}
