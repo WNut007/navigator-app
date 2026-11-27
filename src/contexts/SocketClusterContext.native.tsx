@@ -22,6 +22,8 @@ export const SocketClusterProvider = ({ children }) => {
     // Channels the screens want; re-subscribed after the socket signs in again (token renewal,
     // server kick-out on expiry, app back in the foreground)
     const wantedChannelsRef = useRef<Set<string>>(new Set());
+    // 'token' once the server issued a socket token, 'anonymous' when socket auth is off (404)
+    const authModeRef = useRef<'unknown' | 'token' | 'anonymous'>('unknown');
 
     useEffect(() => {
         // Initialize the socket connection
@@ -44,11 +46,21 @@ export const SocketClusterProvider = ({ children }) => {
         const resubscribeWanted = () => {
             wantedChannelsRef.current.forEach((name) => {
                 if (!scSocket.isSubscribed(name, true)) {
-                    scSocket.subscribe(name);
+                    scSocket.subscribe(name, { waitForAuth: true });
                 }
             });
         };
-        const authenticate = async () => {
+        // One sign-in at a time: connect, login and kickOut often fire together
+        let inFlight = null;
+        const authenticate = () => {
+            if (!inFlight) {
+                inFlight = signIn().finally(() => {
+                    inFlight = null;
+                });
+            }
+            return inFlight;
+        };
+        const signIn = async () => {
             clearTimeout(refreshTimer);
             const sessionToken = storage.getString('_driver_token');
             const host = resolveConnectionConfig('FLEETBASE_HOST');
@@ -66,11 +78,17 @@ export const SocketClusterProvider = ({ children }) => {
                     headers: { Authorization: `Bearer ${sessionToken}`, Accept: 'application/json', 'User-Agent': 'shipcode-driver-app' },
                 });
                 if (!response.ok) {
+                    if (response.status === 404) {
+                        // Socket auth is off on this server: subscribe without waiting for auth
+                        authModeRef.current = 'anonymous';
+                        scSocket.processPendingSubscriptions();
+                    }
                     return;
                 }
 
                 const { token, expires_in } = await response.json();
                 if (disposed || !token) return;
+                authModeRef.current = 'token';
                 await scSocket.authenticate(token);
                 tokenExpiresAt = Date.now() + Number(expires_in || 300) * 1000;
                 resubscribeWanted();
@@ -169,7 +187,9 @@ export const SocketClusterProvider = ({ children }) => {
                 await Promise.race([authReadyRef.current?.catch?.(() => {}), new Promise((resolve) => setTimeout(resolve, 5000))]);
 
                 wantedChannelsRef.current.add(channelName);
-                const channel = socket.subscribe(channelName);
+                // waitForAuth: after a reconnect the client holds the channel until the socket has
+                // signed in again, instead of subscribing anonymously and being refused
+                const channel = socket.subscribe(channelName, { waitForAuth: authModeRef.current !== 'anonymous' });
                 if (channel.isSubscribed()) {
                     console.log(`Already subscribed to channel "${channelName}".`);
                     return channel;

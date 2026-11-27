@@ -10,7 +10,7 @@ import MapErrorBoundary from './MapErrorBoundary';
 import { config, last, first } from '../utils';
 import { formattedAddressFromPlace } from '../utils/location';
 import { toast } from '../utils/toast';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import LocationMarker from './LocationMarker';
 import DriverMarker from './DriverMarker';
@@ -155,6 +155,15 @@ const LiveOrderRouteMap = ({
         setZoomLevel(newZoomLevel);
     };
 
+    // Road directions need a Google Maps key. Without one the directions component retries
+    // forever and re-renders the whole list; draw a dashed straight line between the stops instead.
+    const hasDirectionsKey = Boolean(config('GOOGLE_MAPS_API_KEY'));
+    const straightRoute = useMemo(
+        () => [origin, ...middleWaypoints.map(({ coordinate }) => coordinate), destination].filter(Boolean),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [JSON.stringify(origin), JSON.stringify(destination), middleWaypoints.length]
+    );
+
     const fitToRoute = ({ coordinates }) => {
         if (!mapRef.current || !Array.isArray(coordinates) || coordinates.length === 0) return;
         mapRef.current.fitToCoordinates(coordinates, {
@@ -186,6 +195,9 @@ const LiveOrderRouteMap = ({
                 initialRegion={mapRegion}
                 onRegionChangeComplete={handleRegionChangeComplete}
                 scrollEnabled={scrollEnabled}
+                onMapReady={() => {
+                    if (!hasDirectionsKey && straightRoute.length > 1) fitToRoute({ coordinates: straightRoute });
+                }}
                 {...mapViewProps}
             >
                 {driverAssigned && <DriverMarker driver={driverAssigned} onMovement={focusDriver} />}
@@ -208,7 +220,9 @@ const LiveOrderRouteMap = ({
                     </Marker>
                 )}
 
-                {origin && destination && (
+                {origin && destination && !hasDirectionsKey && <Polyline coordinates={straightRoute} strokeWidth={3} strokeColor={theme['$blue-500'].val} lineDashPattern={[8, 6]} />}
+
+                {origin && destination && hasDirectionsKey && (
                     <MapViewDirections
                         origin={origin}
                         destination={destination}
