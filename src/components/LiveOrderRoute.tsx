@@ -162,6 +162,7 @@ const LiveOrderRouteMap = ({
     }
 
     const handleRegionChangeComplete = (region) => {
+        dbg('regionChangeComplete', JSON.stringify(region));
         setMapRegion(region);
         const newZoomLevel = calculateZoomLevel(region.latitudeDelta);
         setZoomLevel(newZoomLevel);
@@ -192,6 +193,19 @@ const LiveOrderRouteMap = ({
     const [mapUsable, setMapUsable] = useState(false);
     const routeKey = JSON.stringify(straightRoute);
 
+    // TEMP diagnostics for the trip fit (remove once the map opens on the whole trip)
+    const mountIdRef = useRef(Math.random().toString(36).slice(2, 6));
+    const dbg = (...args) => console.log(`[LiveOrderRoute ${mountIdRef.current}]`, ...args);
+    useEffect(() => {
+        dbg('mount');
+        return () => dbg('unmount');
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+    useEffect(() => {
+        dbg('stops', JSON.stringify({ origin, destination, middle: middleWaypoints.length, usable: mapUsable }));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [routeKey, mapUsable]);
+
     // Region covering every stop. Android applies initialRegion when the map finishes loading,
     // which can be after an early fit and would undo it, so the initial region itself is the trip.
     const tripRegion = useMemo(() => {
@@ -214,7 +228,7 @@ const LiveOrderRouteMap = ({
     useEffect(() => {
         if (!mapUsable || hasDirectionsKey || straightRoute.length < 2) return;
         const timer = setTimeout(() => {
-            console.log('[LiveOrderRoute] fit to', straightRoute.length, 'stops');
+            dbg('fit to', straightRoute.length, 'stops', 'mapRef', Boolean(mapRef.current));
             fitToRoute({ coordinates: straightRoute });
         }, 400);
         return () => clearTimeout(timer);
@@ -244,12 +258,17 @@ const LiveOrderRouteMap = ({
                 initialRegion={initialRegionRef.current ?? mapRegion}
                 onRegionChangeComplete={handleRegionChangeComplete}
                 scrollEnabled={scrollEnabled}
-                onMapReady={() => setMapUsable(true)}
+                onMapReady={() => {
+                    dbg('onMapReady');
+                    setMapUsable(true);
+                }}
                 onMapLoaded={() => {
+                    dbg('onMapLoaded', straightRoute.length, 'stops');
                     // Last word after Android applied initialRegion on load
                     if (!hasDirectionsKey && straightRoute.length > 1) fitToRoute({ coordinates: straightRoute });
                 }}
                 onLayout={(event) => {
+                    dbg('onLayout', JSON.stringify(event?.nativeEvent?.layout));
                     if (event?.nativeEvent?.layout?.width > 0) setMapUsable(true);
                 }}
                 {...mapViewProps}
