@@ -155,9 +155,11 @@ const LiveOrderRouteMap = ({
         setZoomLevel(newZoomLevel);
     };
 
-    // Road directions need a Google Maps key. Without one the directions component retries
-    // forever and re-renders the whole list; draw a dashed straight line between the stops instead.
-    const hasDirectionsKey = Boolean(config('GOOGLE_MAPS_API_KEY'));
+    // Road directions come from Google's Directions API, which is billed per request (the map itself
+    // is free). ShipCode's key only enables the Maps SDK, so directions are off unless explicitly
+    // enabled; without them draw a dashed straight line between the stops (road routes from our
+    // own OSRM later). A directions call without access retries forever and re-renders the screen.
+    const hasDirectionsKey = Boolean(config('GOOGLE_MAPS_API_KEY')) && String(config('GOOGLE_DIRECTIONS_ENABLED')) === 'true';
     const straightRoute = useMemo(
         () => [origin, ...middleWaypoints.map(({ coordinate }) => coordinate), destination].filter(Boolean),
         // eslint-disable-next-line react-hooks/exhaustive-deps
