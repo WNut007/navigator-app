@@ -1,4 +1,4 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { Text, YStack, XStack, useTheme } from 'tamagui';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
@@ -186,6 +186,21 @@ const LiveOrderRouteMap = ({
         });
     };
 
+    // Fit the whole trip whenever the map is usable and whenever the stops change (they can arrive
+    // after the first render). onMapReady doesn't fire reliably on every Android/map version, so
+    // the map's first layout also counts as ready.
+    const [mapUsable, setMapUsable] = useState(false);
+    const routeKey = JSON.stringify(straightRoute);
+    useEffect(() => {
+        if (!mapUsable || hasDirectionsKey || straightRoute.length < 2) return;
+        const timer = setTimeout(() => {
+            console.log('[LiveOrderRoute] fit to', straightRoute.length, 'stops');
+            fitToRoute({ coordinates: straightRoute });
+        }, 400);
+        return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [mapUsable, routeKey, hasDirectionsKey]);
+
     const focusDriver = ({ coordinates }) => {
         // Note: latitude and longitude should be derived from coordinates
         if (!mapRef.current || !isValidCoordinate(coordinates)) return;
@@ -209,9 +224,9 @@ const LiveOrderRouteMap = ({
                 initialRegion={mapRegion}
                 onRegionChangeComplete={handleRegionChangeComplete}
                 scrollEnabled={scrollEnabled}
-                onMapReady={() => {
-                    // Fit again once the map has its real size (the first layout can still be 0 px)
-                    if (!hasDirectionsKey && straightRoute.length > 1) setTimeout(() => fitToRoute({ coordinates: straightRoute }), 300);
+                onMapReady={() => setMapUsable(true)}
+                onLayout={(event) => {
+                    if (event?.nativeEvent?.layout?.width > 0) setMapUsable(true);
                 }}
                 {...mapViewProps}
             >
