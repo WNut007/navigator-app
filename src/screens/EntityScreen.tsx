@@ -22,7 +22,7 @@ const EntityScreen = ({ route }) => {
             </XStack>
             <SectionHeader title={tr("Details")} />
             <YStack py='$4'>
-                <SectionInfoLine title='ID' value={entity.id} />
+                <SectionInfoLine title={tr('ID')} value={entity.id} />
                 <Separator />
                 <SectionInfoLine title={tr("Internal ID")} value={entity.internal_id} />
                 <Separator />

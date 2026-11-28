@@ -414,7 +414,7 @@ export function formatWhatsAppTimestamp(date) {
     }
 
     // Older than this year
-    return format(date, 'MM/dd/yy'); // 03/05/24
+    return format(date, 'd MMM yyyy'); // 5 มี.ค. 2024 / 5 Mar 2024 (C.E. years)
 }
 
 export function smartHumanize(string) {

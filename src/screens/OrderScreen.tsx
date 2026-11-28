@@ -600,7 +600,7 @@ const OrderScreen = ({ route }) => {
                 </ActionContainer>
                 <SectionHeader title={tr("Order Information")} />
                 <YStack py='$4'>
-                    <SectionInfoLine title='ID' value={order.id} />
+                    <SectionInfoLine title={tr('ID')} value={order.id} />
                     <Separator />
                     <SectionInfoLine title={tr("Internal ID")} value={order.getAttribute('internal_id')} />
                     <Separator />
