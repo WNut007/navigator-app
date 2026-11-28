@@ -16,6 +16,8 @@
   "Address Details": "รายละเอียดที่อยู่",
   "Address label or name": "ชื่อเรียกหรือชื่อสถานที่",
   "Address saved.": "บันทึกที่อยู่แล้ว",
+  "Allow camera": "อนุญาตใช้กล้อง",
+  "Allow camera access to scan the QR code": "อนุญาตให้ใช้กล้องเพื่อสแกน QR",
   "Altitude": "ความสูง",
   "Apple Sign-In failed: Missing token or authorization code.": "เข้าสู่ระบบด้วย Apple ไม่สำเร็จ",
   "Apple Sign-In is not supported on this device": "เครื่องนี้ไม่รองรับการเข้าสู่ระบบด้วย Apple",

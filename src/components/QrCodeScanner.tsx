@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { Camera, useCameraDevice, useCodeScanner } from 'react-native-vision-camera';
+import { Camera, useCameraDevice, useCodeScanner, useCameraPermission } from 'react-native-vision-camera';
 import { tr } from '../utils/tr';
 
 type QrCodeScannerProps = {
@@ -13,16 +13,18 @@ type QrCodeScannerProps = {
 
 export const QrCodeScanner: React.FC<QrCodeScannerProps> = ({ onScan, width = '100%', height = '100%', overlayStyle = {}, scanCooldown = 3000 }) => {
     const device = useCameraDevice('back');
+    // ShipCode: render the camera only once permission is granted. Before, the camera started while
+    // Android's permission dialog was still open, failed, and stayed black until the screen was reopened.
+    const { hasPermission, requestPermission } = useCameraPermission();
     const [isScanning, setIsScanning] = useState(true);
     const cooldownRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
-        (async () => {
-            const status = await Camera.requestCameraPermission();
-            if (status !== 'authorized') {
-                console.warn('Camera permission not granted');
-            }
-        })();
+        if (!hasPermission) {
+            requestPermission().then((granted) => {
+                if (!granted) console.warn('Camera permission not granted');
+            });
+        }
 
         return () => {
             if (cooldownRef.current) {
@@ -48,6 +50,17 @@ export const QrCodeScanner: React.FC<QrCodeScannerProps> = ({ onScan, width = '1
             }, scanCooldown);
         },
     });
+
+    if (!hasPermission) {
+        return (
+            <View style={[styles.noCamera, { width, height }]}>
+                <Text style={{ color: '#fff', textAlign: 'center', paddingHorizontal: 24 }}>{tr('Allow camera access to scan the QR code')}</Text>
+                <Text style={{ color: '#60a5fa', marginTop: 16 }} onPress={() => requestPermission()}>
+                    {tr('Allow camera')}
+                </Text>
+            </View>
+        );
+    }
 
     if (!device) {
         return (
