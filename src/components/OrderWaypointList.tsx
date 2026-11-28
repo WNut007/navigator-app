@@ -7,6 +7,7 @@ import Collapsible from 'react-native-collapsible';
 import Badge from './Badge';
 import { isArray, isEmpty } from '../utils';
 import { lowercase } from '../utils/format';
+import { tr } from '../utils/tr';
 
 export const COLLAPSE_POINT = 2;
 export const CIRCLE_SIZE = 32;
@@ -120,8 +121,7 @@ const WaypointCollapseButton: React.FC<WaypointCollapseButtonProps> = ({ isColla
                         </Text>
                     </XStack>
                     <Text color='$warningText' {...textStyle}>
-                        {count} more waypoints
-                    </Text>
+                        {count} {tr("more waypoints")}</Text>
                 </YStack>
             </Button>
         </XStack>

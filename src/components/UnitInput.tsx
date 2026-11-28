@@ -8,6 +8,7 @@ import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { Portal } from '@gorhom/portal';
 import { debounce } from '../utils';
 import unit from '../constants/Units';
+import { tr } from '../utils/tr';
 
 const getDefaultUnit = (type, defaultValue) => {
     if (typeof type === 'string' && type.startsWith('volume')) {
@@ -197,7 +198,7 @@ const UnitInput = ({
                     <YStack px='$2'>
                         <BottomSheetTextInput
                             ref={searchInputRef}
-                            placeholder='Search unit'
+                            placeholder={tr("Search unit")}
                             onChangeText={setSearchTerm}
                             autoCapitalize='none'
                             autoComplete='off'

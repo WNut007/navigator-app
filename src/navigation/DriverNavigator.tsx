@@ -51,6 +51,7 @@ import BackButton from '../components/BackButton';
 import HeaderButton from '../components/HeaderButton';
 import Badge from '../components/Badge';
 import DeviceInfo from 'react-native-device-info';
+import { tr } from '../utils/tr';
 
 const isAndroid = Platform.OS === 'android';
 const importedIconsMap = {
@@ -305,9 +306,7 @@ const DriverReportTab = createNativeStackNavigator({
                     presentation: 'modal',
                     headerTitle: '',
                     headerLeft: (props) => (
-                        <Text color='$textPrimary' fontSize={20} fontWeight='bold'>
-                            Create a new Fuel Report
-                        </Text>
+                        <Text color='$textPrimary' fontSize={20} fontWeight='bold'>{tr("Create a new Fuel Report")}</Text>
                     ),
                     headerRight: (props) => <HeaderButton icon={faTimes} onPress={() => navigation.goBack()} />,
                     headerStyle: {
@@ -327,8 +326,7 @@ const DriverReportTab = createNativeStackNavigator({
                     presentation: 'modal',
                     headerTitle: '',
                     headerLeft: (props) => (
-                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' numberOfLines={1}>
-                            Edit Fuel Report from {format(new Date(fuelReport.created_at), 'MMM dd, yyyy HH:mm')}
+                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' numberOfLines={1}>{tr("Edit Fuel Report from")} {format(new Date(fuelReport.created_at), 'MMM dd, yyyy HH:mm')}
                         </Text>
                     ),
                     headerRight: (props) => <HeaderButton icon={faTimes} onPress={() => navigation.goBack()} />,
@@ -369,9 +367,7 @@ const DriverReportTab = createNativeStackNavigator({
                     presentation: 'modal',
                     headerTitle: '',
                     headerLeft: (props) => (
-                        <Text color='$textPrimary' fontSize={20} fontWeight='bold'>
-                            Create a new Issue
-                        </Text>
+                        <Text color='$textPrimary' fontSize={20} fontWeight='bold'>{tr("Create a new Issue")}</Text>
                     ),
                     headerRight: (props) => <HeaderButton icon={faTimes} onPress={() => navigation.goBack()} />,
                     headerStyle: {
@@ -391,8 +387,7 @@ const DriverReportTab = createNativeStackNavigator({
                     presentation: 'modal',
                     headerTitle: '',
                     headerLeft: (props) => (
-                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' numberOfLines={1}>
-                            Edit Issue from {format(new Date(issue.created_at), 'MMM dd, yyyy HH:mm')}
+                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' numberOfLines={1}>{tr("Edit Issue from")} {format(new Date(issue.created_at), 'MMM dd, yyyy HH:mm')}
                         </Text>
                     ),
                     headerRight: (props) => <HeaderButton icon={faTimes} onPress={() => navigation.goBack()} />,

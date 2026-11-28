@@ -46,6 +46,7 @@ import Spacer from '../components/Spacer';
 import BackButton from '../components/BackButton';
 import SafeSpinner from '../components/SafeSpinner';
 import { SectionHeader, SectionInfoLine, ActionContainer } from '../components/Content';
+import { tr } from '../utils/tr';
 
 const getOrderDestination = (order, adapter) => {
     const pickup = order.getAttribute('payload.pickup');
@@ -189,7 +190,7 @@ const OrderScreen = ({ route }) => {
 
     const alertDestinationChanged = (previousDestination, currentDestination, order) => {
         return Alert.alert(
-            'Waypoint Completed',
+            tr("Waypoint Completed"),
             `Waypoint activity completed for destination ${previousDestination.getAttribute('address')}. Your current destination is now ${currentDestination.getAttribute('address')}. You can change the destination at anytime by pressing the "Current Destination" button.`,
             [
                 {
@@ -259,7 +260,7 @@ const OrderScreen = ({ route }) => {
                 console.warn('Error starting order:', err, err.message);
                 const errorMessage = err.message ?? '';
                 if (errorMessage.startsWith('Order has not been dispatched')) {
-                    return Alert.alert('Order Not Dispatched Yet', 'This order is not yet dispatched, are you sure you want to continue?', [
+                    return Alert.alert(tr("Order Not Dispatched Yet"), tr("This order is not yet dispatched, are you sure you want to continue?"), [
                         {
                             text: 'Yes',
                             onPress: () => {
@@ -287,7 +288,7 @@ const OrderScreen = ({ route }) => {
         try {
             const activity = await runWithLoading(order.getNextActivity({ waypoint: destination?.id }), 'nextOrderActivity');
             if (activity.code === 'dispatched') {
-                return Alert.alert('Warning!', 'This order is not yet dispatched, are you sure you want to continue?', [
+                return Alert.alert(tr("Warning!"), tr("This order is not yet dispatched, are you sure you want to continue?"), [
                     {
                         text: 'Yes',
                         onPress: async () => {
@@ -375,7 +376,9 @@ const OrderScreen = ({ route }) => {
     );
 
     const handleAdhocAccept = useCallback(async () => {
-        Alert.alert('Accept Ad-Hoc order?', 'By accepting this ad-hoc order it will become assigned to you and the order will start immediatley.', [
+        Alert.alert(tr("Accept Ad-Hoc order?"), tr(
+            "By accepting this ad-hoc order it will become assigned to you and the order will start immediatley."
+        ), [
             {
                 text: 'Cancel',
                 style: 'cancel',
@@ -399,7 +402,9 @@ const OrderScreen = ({ route }) => {
     }, [order, driver, setIsAccepting]);
 
     const handleAdhocDismissal = useCallback(() => {
-        Alert.alert('Dismiss Ad-Hoc order?', 'By dimissing this ad-hoc order it will no longer display as an available order.', [
+        Alert.alert(tr("Dismiss Ad-Hoc order?"), tr(
+            "By dimissing this ad-hoc order it will no longer display as an available order."
+        ), [
             {
                 text: 'Cancel',
                 style: 'cancel',
@@ -548,13 +553,13 @@ const OrderScreen = ({ route }) => {
                             <XStack flex={1} space='$2' ml={5}>
                                 <Button onPress={handleAdhocAccept} flex={1} bg='$success' borderWidth={1} borderColor='$successBorder' disabled={isAccepting}>
                                     <Button.Icon>{isAccepting ? <SafeSpinner color={theme.successText.val} /> : <FontAwesomeIcon icon={faCheck} color={theme.successText.val} />}</Button.Icon>
-                                    <Button.Text color='$successText'>Accept Order</Button.Text>
+                                    <Button.Text color='$successText'>{tr("Accept Order")}</Button.Text>
                                 </Button>
                                 <Button onPress={handleAdhocDismissal} flex={1} bg='$error' borderWidth={1} borderColor='$errorBorder' disabled={isAccepting}>
                                     <Button.Icon>
                                         <FontAwesomeIcon icon={faBan} color={theme.errorText.val} />
                                     </Button.Icon>
-                                    <Button.Text color='$errorText'>Dismiss Order</Button.Text>
+                                    <Button.Text color='$errorText'>{tr("Dismiss Order")}</Button.Text>
                                 </Button>
                             </XStack>
                         )}
@@ -563,7 +568,7 @@ const OrderScreen = ({ route }) => {
                                 <Button.Icon>
                                     {isLoading('startOrder') ? <SafeSpinner color={theme.successText.val} /> : <FontAwesomeIcon icon={faFlagCheckered} color={theme.successText.val} />}
                                 </Button.Icon>
-                                <Button.Text color='$successText'>Start Order</Button.Text>
+                                <Button.Text color='$successText'>{tr("Start Order")}</Button.Text>
                             </Button>
                         )}
                         {order.isInProgress && (
@@ -571,13 +576,13 @@ const OrderScreen = ({ route }) => {
                                 <Button.Icon>
                                     {isLoading('nextOrderActivity') ? <SafeSpinner color={theme.successText.val} /> : <FontAwesomeIcon icon={faPenToSquare} color={theme.infoText.val} />}
                                 </Button.Icon>
-                                <Button.Text color='$successText'>Update Activity</Button.Text>
+                                <Button.Text color='$successText'>{tr("Update Activity")}</Button.Text>
                             </Button>
                         )}
                         {isNavigatable && (
                             <Button onPress={startNavigation} bg='$info' borderWidth={1} borderColor='$infoBorder'>
                                 <Button.Icon>{isLoading('startNavigation') ? <SafeSpinner color={theme.infoText.val} /> : <FontAwesomeIcon icon={faPaperPlane} color={theme.infoText.val} />}</Button.Icon>
-                                <Button.Text color='$infoText'>Start Navigation</Button.Text>
+                                <Button.Text color='$infoText'>{tr("Start Navigation")}</Button.Text>
                             </Button>
                         )}
                     </XStack>
@@ -593,23 +598,23 @@ const OrderScreen = ({ route }) => {
                         </YStack>
                     )}
                 </ActionContainer>
-                <SectionHeader title='Order Information' />
+                <SectionHeader title={tr("Order Information")} />
                 <YStack py='$4'>
                     <SectionInfoLine title='ID' value={order.id} />
                     <Separator />
-                    <SectionInfoLine title='Internal ID' value={order.getAttribute('internal_id')} />
+                    <SectionInfoLine title={tr("Internal ID")} value={order.getAttribute('internal_id')} />
                     <Separator />
-                    <SectionInfoLine title='Tracking Number' value={order.getAttribute('tracking_number.tracking_number')} />
+                    <SectionInfoLine title={tr("Tracking Number")} value={order.getAttribute('tracking_number.tracking_number')} />
                     <Separator />
-                    <SectionInfoLine title='Proof of Delivery' value={order.getAttribute('pod_required') ? titleize(order.getAttribute('pod_method')) : 'N/A'} />
+                    <SectionInfoLine title={tr("Proof of Delivery")} value={order.getAttribute('pod_required') ? titleize(order.getAttribute('pod_method')) : 'N/A'} />
                     <Separator />
-                    <SectionInfoLine title='Type' value={titleize(order.getAttribute('type'))} />
+                    <SectionInfoLine title={tr("Type")} value={titleize(order.getAttribute('type'))} />
                     <Separator />
-                    <SectionInfoLine title='Date Created' value={formatDate(new Date(order.getAttribute('created_at')), 'PP HH:mm')} />
+                    <SectionInfoLine title={tr("Date Created")} value={formatDate(new Date(order.getAttribute('created_at')), 'PP HH:mm')} />
                     <Separator />
-                    <SectionInfoLine title='Date Scheduled' value={order.getAttribute('scheduled_at') ? formatDate(new Date(order.getAttribute('scheduled_at')), 'PP HH:mm') : '-'} />
+                    <SectionInfoLine title={tr("Date Scheduled")} value={order.getAttribute('scheduled_at') ? formatDate(new Date(order.getAttribute('scheduled_at')), 'PP HH:mm') : '-'} />
                     <Separator />
-                    <SectionInfoLine title='Date Dispatched' value={order.getAttribute('dispatched_at') ? formatDate(new Date(order.getAttribute('dispatched_at')), 'PP HH:mm') : '-'} />
+                    <SectionInfoLine title={tr("Date Dispatched")} value={order.getAttribute('dispatched_at') ? formatDate(new Date(order.getAttribute('dispatched_at')), 'PP HH:mm') : '-'} />
                     {customFieldKeys.map((key, index) => (
                         <YStack key={index}>
                             <Separator />
@@ -617,11 +622,11 @@ const OrderScreen = ({ route }) => {
                         </YStack>
                     ))}
                 </YStack>
-                <SectionHeader title='Order Route' />
+                <SectionHeader title={tr("Order Route")} />
                 <YStack px='$3' py='$4'>
                     <OrderWaypointList order={order} />
                 </YStack>
-                <SectionHeader title='Order Progress' />
+                <SectionHeader title={tr("Order Progress")} />
                 <YStack>
                     <YStack px='$3' py='$4'>
                         <OrderProgressBar
@@ -632,44 +637,44 @@ const OrderScreen = ({ route }) => {
                         />
                     </YStack>
                     <YStack pb='$3'>
-                        <SectionInfoLine title='Current Destination' value={trackerData.current_destination?.address} />
+                        <SectionInfoLine title={tr("Current Destination")} value={trackerData.current_destination?.address} />
                         <Separator />
-                        <SectionInfoLine title='Next Destination' value={trackerData.next_destination?.address} />
+                        <SectionInfoLine title={tr("Next Destination")} value={trackerData.next_destination?.address} />
                         <Separator />
-                        <SectionInfoLine title='Total Distance' value={formatMeters(trackerData.total_distance)} />
+                        <SectionInfoLine title={tr("Total Distance")} value={formatMeters(trackerData.total_distance)} />
                         <Separator />
-                        <SectionInfoLine title='Start Time' value={trackerData.start_time ? '-' : trackerData.start_time} />
+                        <SectionInfoLine title={tr("Start Time")} value={trackerData.start_time ? '-' : trackerData.start_time} />
                         <Separator />
-                        <SectionInfoLine title='Current ETA' value={trackerData.current_destination_eta === -1 ? 'N/A' : formatDuration(trackerData.current_destination_eta)} />
+                        <SectionInfoLine title={tr("Current ETA")} value={trackerData.current_destination_eta === -1 ? 'N/A' : formatDuration(trackerData.current_destination_eta)} />
                         <Separator />
-                        <SectionInfoLine title='ECT' value={trackerData.estimated_completion_time_formatted} />
+                        <SectionInfoLine title={tr("ECT")} value={trackerData.estimated_completion_time_formatted} />
                     </YStack>
                 </YStack>
-                <SectionHeader title='Order Notes' />
+                <SectionHeader title={tr("Order Notes")} />
                 <YStack px='$3' py='$4'>
                     <Text color='$textPrimary'>{order.getAttribute('notes', 'N/A') ?? 'N/A'}</Text>
                 </YStack>
-                <SectionHeader title='Order Proof' />
+                <SectionHeader title={tr("Order Proof")} />
                 <YStack>
                     <OrderProofOfDelivery order={order} />
                 </YStack>
-                <SectionHeader title='Order Payload' />
+                <SectionHeader title={tr("Order Payload")} />
                 <YStack>
                     <OrderPayloadEntities order={order} onPress={({ entity, waypoint }) => navigation.navigate('Entity', { entity, waypoint })} />
                 </YStack>
                 {order.isAttributeFilled('customer') && (
                     <>
-                        <SectionHeader title='Customer' />
+                        <SectionHeader title={tr("Customer")} />
                         <YStack px='$3' py='$4'>
                             <OrderCustomerCard customer={order.getAttribute('customer')} />
                         </YStack>
                     </>
                 )}
-                <SectionHeader title='Order Documents & Files' />
+                <SectionHeader title={tr("Order Documents & Files")} />
                 <YStack>
                     <OrderDocumentFiles order={order} />
                 </YStack>
-                <SectionHeader title='Order Comments' />
+                <SectionHeader title={tr("Order Comments")} />
                 <YStack px='$2' py='$4'>
                     <OrderCommentThread order={order} />
                 </YStack>

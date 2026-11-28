@@ -1,0 +1,88 @@
+{
+    "common": {
+        "fleetbase": "ShipCode",
+        "navigator": "ShipCode Driver",
+        "apiKey": "API Key",
+        "cancel": "ยกเลิก",
+        "new": "ใหม่",
+        "create": "สร้าง",
+        "save": "บันทึก",
+        "delete": "ลบ",
+        "edit": "แก้ไข",
+        "update": "อัปเดต",
+        "service": "บริการ",
+        "retry": "ลองอีกครั้ง",
+        "loading": "กำลังโหลด...",
+        "confirm": "ยืนยัน",
+        "confirmation": "ยืนยัน",
+        "ok": "ตกลง",
+        "done": "เสร็จ",
+        "tryAgain": "ลองอีกครั้ง"
+    },
+    "orderStatuses": {
+        "created": "สร้างแล้ว",
+        "preparing": "กำลังเตรียม",
+        "dispatched": "ปล่อยงานแล้ว",
+        "driver_enroute": "คนขับกำลังไป",
+        "pending": "รอดำเนินการ",
+        "in_progress": "กำลังดำเนินการ",
+        "completed": "เสร็จสิ้น"
+    },
+    "BootScreen": {
+        "missingRequiredConfigurationKeys": "ยังไม่ได้ตั้งค่าที่จำเป็น"
+    },
+    "AccountScreen": {
+        "changeProfilePhotoOptions": {
+            "takePhoto": "ถ่ายรูป",
+            "photoLibrary": "เลือกจากคลังรูป",
+            "deleteProfilePhoto": "ลบรูปโปรไฟล์"
+        },
+        "profilePhoto": "รูปโปรไฟล์",
+        "email": "อีเมล",
+        "phoneNumber": "เบอร์โทร",
+        "name": "ชื่อ",
+        "language": "ภาษา",
+        "theme": "ธีม",
+        "deleteAccount": "ลบบัญชี",
+        "termsOfService": "ข้อกำหนดการใช้งาน",
+        "privacyPolicy": "นโยบายความเป็นส่วนตัว",
+        "tracking": "การติดตามตำแหน่ง",
+        "account": "บัญชี",
+        "dataProtection": "การคุ้มครองข้อมูล",
+        "clearCache": "ล้างแคช",
+        "signOut": "ออกจากระบบ",
+        "signedOut": "ออกจากระบบแล้ว",
+        "cacheCleared": "ล้างแคชแล้ว",
+        "schemeChanged": "เปลี่ยนเป็นโหมด {{selectedScheme}} แล้ว",
+        "languageChanged": "เปลี่ยนเป็นภาษา {{selectedLanguage}} แล้ว",
+        "photoChanged": "เปลี่ยนรูปโปรไฟล์แล้ว",
+        "photoRemoved": "ลบรูปโปรไฟล์แล้ว"
+    },
+    "ProfileScreen": {
+        "organizationChanged": "เปลี่ยนไปใช้องค์กร {{selectedOrganization}} แล้ว"
+    },
+    "AddNewLocationScreen": {
+        "addNewAddress": "เพิ่มที่อยู่ใหม่",
+        "streetName": "บ้านเลขที่และถนน",
+        "weThinkYoureAroundHere": "ตอนนี้คุณน่าจะอยู่แถวนี้",
+        "cantFindYourAddress": "หาที่อยู่ไม่เจอ?",
+        "useMapInstead": "ปักหมุดบนแผนที่แทน"
+    },
+    "SetupWarningScreen": {
+        "configurationMissing": "ยังตั้งค่าไม่ครบ!",
+        "unconfiguredApp": "แอปยังไม่ได้ตั้งค่าให้ถูกต้อง",
+        "envMissing": "ยังไม่ได้ตั้งค่า"
+    },
+    "DriverReportScreen": {},
+    "LocationPermissionScreen": {
+        "enableLocationServices": "การใช้ข้อมูลตำแหน่ง",
+        "enableLocationPrompt": "แอปคนขับ ShipCode เก็บตำแหน่งที่แม่นยำของคุณ เพื่อให้ทีมจัดส่งเห็นตำแหน่งรถแบบเรียลไทม์และอัปเดตความคืบหน้าของงานให้ลูกค้า แม้แอปจะปิดหน้าจออยู่หรือไม่ได้เปิดใช้งาน ระบบจะเก็บตำแหน่งเฉพาะตอนที่คุณออนไลน์ และส่งไปยังเซิร์ฟเวอร์ของบริษัทอย่างปลอดภัย\n\nในขั้นถัดไป กรุณาเลือก \"อนุญาตตลอดเวลา\" (Allow all the time) และอนุญาต \"การเคลื่อนไหวร่างกาย\" (Physical activity) เพื่อให้แอปรู้ว่ารถกำลังวิ่งหรือจอด และประหยัดแบตเตอรี่",
+        "shareAndContinue": "อนุญาตและดำเนินการต่อ",
+        "privacyPolicy": "นโยบายความเป็นส่วนตัว",
+        "permissionNeededTitle": "ต้องอนุญาตให้ใช้ตำแหน่ง",
+        "enableInSettingsTitle": "เปิดการใช้ตำแหน่งในการตั้งค่า",
+        "permissionDeniedPrompt": "ต้องอนุญาตให้ใช้ตำแหน่งก่อนเข้าสู่ระบบ ต้องการอนุญาตตอนนี้เลยไหม?",
+        "locationBlockedPrompt": "การใช้ตำแหน่งถูกปิดอยู่ กรุณาเปิดในหน้าการตั้งค่าเพื่อดำเนินการต่อ",
+        "goToSettings": "ไปที่การตั้งค่า"
+    }
+}

@@ -18,6 +18,7 @@ import MultipleCustomerAvatars from './MultipleCustomerAvatars';
 import LoadingText from './LoadingText';
 import LoadingOverlay from './LoadingOverlay';
 import Badge from './Badge';
+import { tr } from '../utils/tr';
 
 const INFO_FIELD_VALUE_MIN_HEIGHT = 30;
 export const AdhocOrderCard = ({ order, onPress, onAccept, onDismiss }) => {
@@ -44,7 +45,9 @@ export const AdhocOrderCard = ({ order, onPress, onAccept, onDismiss }) => {
     }, [location, destination]);
 
     const handleAccept = useCallback(async () => {
-        Alert.alert('Accept Ad-Hoc order?', 'By accepting this ad-hoc order it will become assigned to you and the order will start immediatley.', [
+        Alert.alert(tr("Accept Ad-Hoc order?"), tr(
+            "By accepting this ad-hoc order it will become assigned to you and the order will start immediatley."
+        ), [
             {
                 text: 'Cancel',
                 style: 'cancel',
@@ -70,7 +73,9 @@ export const AdhocOrderCard = ({ order, onPress, onAccept, onDismiss }) => {
     }, [order, setIsAccepting]);
 
     const handleDismiss = useCallback(() => {
-        Alert.alert('Dismiss Ad-Hoc order?', 'By dimissing this ad-hoc order it will no longer display as an available order.', [
+        Alert.alert(tr("Dismiss Ad-Hoc order?"), tr(
+            "By dimissing this ad-hoc order it will no longer display as an available order."
+        ), [
             {
                 text: 'Cancel',
                 style: 'cancel',
@@ -88,7 +93,7 @@ export const AdhocOrderCard = ({ order, onPress, onAccept, onDismiss }) => {
 
     return (
         <Pressable onPress={onPress}>
-            <LoadingOverlay isVisible={isAccepting} text='Accepting and assigning order...' />
+            <LoadingOverlay isVisible={isAccepting} text={tr("Accepting and assigning order...")} />
             <YStack bg='$info' borderRadius='$4' borderWidth={1} borderColor='$infoBorder'>
                 <YStack height={150} borderBottomWidth={1} borderColor='$infoBorder'>
                     <LiveOrderRoute
@@ -109,8 +114,7 @@ export const AdhocOrderCard = ({ order, onPress, onAccept, onDismiss }) => {
                 </YStack>
                 <YStack flex={1} borderRadius='$4'>
                     <XStack bg='$blue-800' alignItems='center' px='$3' py='$3' mb='$3' borderBottomWidth={1} borderColor='$infoBorder'>
-                        <Text color='$infoText' fontSize='$6' fontWeight='bold'>
-                            Order Available Nearby: {formatMeters(distance)}
+                        <Text color='$infoText' fontSize='$6' fontWeight='bold'>{tr("Order Available Nearby:")} {formatMeters(distance)}
                         </Text>
                     </XStack>
                     <XStack alignItems='start' justifyContent='space-between' px='$3' mb='$3'>
@@ -139,7 +143,7 @@ export const AdhocOrderCard = ({ order, onPress, onAccept, onDismiss }) => {
                             icon={faLocationDot}
                             iconColor={theme['$textPrimary'].val}
                             waypoint={destination.serialize()}
-                            title='Pickup Destination'
+                            title={tr("Pickup Destination")}
                             titleStyle={{ fontWeight: 'bold', fontSize: 14, textTransform: 'uppercase' }}
                         />
                     </YStack>
@@ -147,7 +151,7 @@ export const AdhocOrderCard = ({ order, onPress, onAccept, onDismiss }) => {
                         <YStack flex={1}>
                             <Button onPress={handleAccept} bg='$success' borderColor='$successBorder' borderWidth={1} disabled={isAccepting}>
                                 <Button.Icon>{isAccepting ? <Spinner color='$successText' /> : <FontAwesomeIcon icon={faCheck} color={theme['$successText'].val} />}</Button.Icon>
-                                <Button.Text color='$successText'>Accept Order</Button.Text>
+                                <Button.Text color='$successText'>{tr("Accept Order")}</Button.Text>
                             </Button>
                         </YStack>
                         <YStack flex={1}>
@@ -155,7 +159,7 @@ export const AdhocOrderCard = ({ order, onPress, onAccept, onDismiss }) => {
                                 <Button.Icon>
                                     <FontAwesomeIcon icon={faBan} color={theme['$errorText'].val} />
                                 </Button.Icon>
-                                <Button.Text color='$errorText'>Dismiss Order</Button.Text>
+                                <Button.Text color='$errorText'>{tr("Dismiss Order")}</Button.Text>
                             </Button>
                         </YStack>
                     </XStack>

@@ -15,6 +15,7 @@ import LoadingOverlay from '../components/LoadingOverlay';
 import HeaderButton from '../components/HeaderButton';
 import PlaceMapView from '../components/PlaceMapView';
 import useFleetbase from '../hooks/use-fleetbase';
+import { tr } from '../utils/tr';
 
 const IssueScreen = () => {
     const theme = useTheme();
@@ -41,7 +42,7 @@ const IssueScreen = () => {
             }
         };
 
-        Alert.alert('Confirm Deletion', 'Are you sure you want to delete this Issue?', [
+        Alert.alert(tr("Confirm Deletion"), tr("Are you sure you want to delete this Issue?"), [
             { text: 'Cancel', style: 'cancel' },
             { text: 'Delete Issue', onPress: handleDelete },
         ]);
@@ -63,13 +64,11 @@ const IssueScreen = () => {
                     <HeaderButton icon={faTimes} onPress={() => navigation.goBack()} />
                 </XStack>
             </Portal>
-            <LoadingOverlay visible={isLoading} text='Deleting Issue...' />
+            <LoadingOverlay visible={isLoading} text={tr("Deleting Issue...")} />
             <YStack py='$3' space='$3'>
                 <XStack px='$3' alignItems='center' space='$3'>
                     <YStack alignItems='flex-start'>
-                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>
-                            Type:
-                        </Text>
+                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>{tr("Type:")}</Text>
                     </YStack>
                     <YStack flex={1} alignItems='flex-end'>
                         <Text color='$textPrimary' fontSize={17} numberOfLines={1}>
@@ -80,9 +79,7 @@ const IssueScreen = () => {
                 <Separator />
                 <XStack px='$3' alignItems='center' space='$3'>
                     <YStack alignItems='flex-start'>
-                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>
-                            Category:
-                        </Text>
+                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>{tr("Category:")}</Text>
                     </YStack>
                     <YStack flex={1} alignItems='flex-end'>
                         <Text color='$textPrimary' fontSize={17} numberOfLines={1}>
@@ -93,9 +90,7 @@ const IssueScreen = () => {
                 <Separator />
                 <XStack px='$3' alignItems='center' space='$3'>
                     <YStack alignItems='flex-start'>
-                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>
-                            Vehicle:
-                        </Text>
+                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>{tr("Vehicle:")}</Text>
                     </YStack>
                     <YStack flex={1} alignItems='flex-end'>
                         <Text color='$textPrimary' fontSize={17} numberOfLines={1}>
@@ -106,9 +101,7 @@ const IssueScreen = () => {
                 <Separator />
                 <XStack px='$3' alignItems='center' space='$3'>
                     <YStack alignItems='flex-start'>
-                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>
-                            Priority:
-                        </Text>
+                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>{tr("Priority:")}</Text>
                     </YStack>
                     <YStack flex={1} alignItems='flex-end'>
                         <Badge status={issue.priority} fontSize={13} py='$2' />
@@ -117,9 +110,7 @@ const IssueScreen = () => {
                 <Separator />
                 <XStack px='$3' alignItems='center' space='$3'>
                     <YStack alignItems='flex-start'>
-                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>
-                            Status:
-                        </Text>
+                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>{tr("Status:")}</Text>
                     </YStack>
                     <YStack flex={1} alignItems='flex-end'>
                         <Badge status={issue.status} fontSize={13} py='$2' />
@@ -128,9 +119,7 @@ const IssueScreen = () => {
                 <Separator />
                 <YStack px='$3' space='$3'>
                     <YStack alignItems='flex-start'>
-                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>
-                            Report:
-                        </Text>
+                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>{tr("Report:")}</Text>
                     </YStack>
                     <YStack py='$2'>
                         <Text color='$textPrimary' fontSize={18}>
@@ -141,9 +130,7 @@ const IssueScreen = () => {
                 <Separator />
                 <YStack px='$3' space='$3'>
                     <YStack alignItems='flex-start'>
-                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>
-                            Report Location:
-                        </Text>
+                        <Text color='$textSecondary' fontSize={17} fontWeight='bold'>{tr("Report Location:")}</Text>
                     </YStack>
                     <YStack flex={1} alignItems='flex-start'>
                         <PlaceMapView place={location} width='100%' height={200} borderWidth={1} borderColor='$borderColor' />

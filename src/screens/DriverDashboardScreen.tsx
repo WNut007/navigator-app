@@ -6,6 +6,7 @@ import { humanize } from 'inflected';
 import { get } from '../utils';
 import OdometerNumber from '../components/OdometerNumber';
 import useAppTheme from '../hooks/use-app-theme';
+import { tr } from '../utils/tr';
 
 const WidgetContainer = ({ px = '$4', py = '$4', children, ...props }) => {
     const { isDarkMode } = useAppTheme();
@@ -29,7 +30,7 @@ const DriverDashboardScreen = () => {
                     <WidgetContainer>
                         <XStack>
                             <YStack flex={1}>
-                                <Text color='$textPrimary'>Tracking:</Text>
+                                <Text color='$textPrimary'>{tr("Tracking:")}</Text>
                             </YStack>
                             <YStack flex={1} alignItems='flex-end'>
                                 <Text color={isTracking ? '$successBorder' : '$textSecondary'}>{isTracking ? 'Yes' : 'No'}</Text>
@@ -37,9 +38,7 @@ const DriverDashboardScreen = () => {
                         </XStack>
                     </WidgetContainer>
                     <WidgetContainer>
-                        <Text color='$textPrimary' fontWeight='bold' mb='$3'>
-                            Location:
-                        </Text>
+                        <Text color='$textPrimary' fontWeight='bold' mb='$3'>{tr("Location:")}</Text>
                         <XStack flexWrap='wrap' gap='$3'>
                             {['latitude', 'longitude', 'heading', 'altitude'].map((key, index) => {
                                 return (
@@ -57,9 +56,7 @@ const DriverDashboardScreen = () => {
                 <XStack gap='$4'>
                     <WidgetContainer flex={1} alignItems='center' justifyContent='center'>
                         <YStack>
-                            <Text color='$textPrimary' fontWeight='bold' mb='$2'>
-                                Active Orders
-                            </Text>
+                            <Text color='$textPrimary' fontWeight='bold' mb='$2'>{tr("Active Orders")}</Text>
                         </YStack>
                         <YStack>
                             <OdometerNumber value={allActiveOrders.length} digitStyle={{ color: theme['$textSecondary'].val }} digitHeight={36} />
@@ -67,9 +64,7 @@ const DriverDashboardScreen = () => {
                     </WidgetContainer>
                     <WidgetContainer flex={1} alignItems='center' justifyContent='center'>
                         <YStack>
-                            <Text color='$textPrimary' fontWeight='bold' mb='$2'>
-                                Speed
-                            </Text>
+                            <Text color='$textPrimary' fontWeight='bold' mb='$2'>{tr("Speed")}</Text>
                         </YStack>
                         <YStack>
                             <OdometerNumber value={get(location, 'coords.speed', 0)} digitStyle={{ color: theme['$textSecondary'].val }} digitHeight={36} />

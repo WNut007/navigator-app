@@ -13,6 +13,7 @@ import Badge from './Badge';
 import Spacer from './Spacer';
 import useAppTheme from '../hooks/use-app-theme';
 import SafeSpinner from './SafeSpinner';
+import { tr } from '../utils/tr';
 
 const CurrentDestinationSelect = ({ onChange, destination, waypoints = [], snapTo = '100%', isLoading = false, ...props }) => {
     const { isDarkMode } = useAppTheme();
@@ -65,8 +66,7 @@ const CurrentDestinationSelect = ({ onChange, destination, waypoints = [], snapT
                                                 <Badge status={desinationStatus} />
                                             </YStack>
                                         ) : (
-                                            <Text color='$textSecondary' numberOfLines={1}>
-                                                ID: {destination.id}
+                                            <Text color='$textSecondary' numberOfLines={1}>{tr("ID:")} {destination.id}
                                             </Text>
                                         )}
                                     </YStack>
@@ -96,9 +96,7 @@ const CurrentDestinationSelect = ({ onChange, destination, waypoints = [], snapT
                     <BottomSheetView style={{ flex: 1, backgroundColor: theme.surface.val }}>
                         <YStack>
                             <XStack alignItems='center' justifyContent='space-between' px='$5' mb='$4'>
-                                <Text fontSize='$6' color='$textPrimary' fontWeight='bold'>
-                                    Select destination
-                                </Text>
+                                <Text fontSize='$6' color='$textPrimary' fontWeight='bold'>{tr("Select destination")}</Text>
                             </XStack>
                             <BottomSheetFlatList
                                 data={waypoints}
@@ -170,7 +168,7 @@ const CurrentDestinationSelect = ({ onChange, destination, waypoints = [], snapT
                                                                     <Text color={isDestination ? '$white' : '$textPrimary'} fontWeight='bold' numberOfLines={1}>
                                                                         {waypoint.getAttribute('name') ?? waypoint.getAttribute('street1')}
                                                                     </Text>
-                                                                    {isDestination && <Text color='$infoText'>(Destination)</Text>}
+                                                                    {isDestination && <Text color='$infoText'>{tr("(Destination)")}</Text>}
                                                                 </YStack>
                                                                 {typeof waypoint.getAttribute('status') === 'string' && (
                                                                     <Badge status={waypoint.getAttribute('status')} fontSize='$1' px='$2' py='$1' />

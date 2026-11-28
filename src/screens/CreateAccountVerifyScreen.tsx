@@ -8,6 +8,7 @@ import { faCheck, faArrowRotateRight } from '@fortawesome/free-solid-svg-icons';
 import { OtpInput } from 'react-native-otp-entry';
 import { useAuth } from '../contexts/AuthContext';
 import LinearGradient from 'react-native-linear-gradient';
+import { tr } from '../utils/tr';
 
 const CreateAccountVerifyScreen = ({ route }) => {
     const navigation = useNavigation();
@@ -39,8 +40,7 @@ const CreateAccountVerifyScreen = ({ route }) => {
             <LinearGradient colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.8)']} style={StyleSheet.absoluteFillObject} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
             <YStack flex={1} space='$3' padding='$5'>
                 <YStack mb='$4'>
-                    <Text fontSize={20} fontWeight='bold'>
-                        Code sent to {phone}
+                    <Text fontSize={20} fontWeight='bold'>{tr("Code sent to")} {phone}
                     </Text>
                 </YStack>
                 <OtpInput
@@ -52,17 +52,13 @@ const CreateAccountVerifyScreen = ({ route }) => {
                 />
                 <Button onPress={() => handleVerifyCode(code)} bg='$primary' width='100%' opacity={isVerifyingCode ? 0.75 : 1} disabled={isVerifyingCode} rounded>
                     <Button.Icon>{isVerifyingCode ? <Spinner color='$white' /> : <FontAwesomeIcon icon={faCheck} color={theme.white.val} />}</Button.Icon>
-                    <Button.Text color='$white' fontWeight='bold'>
-                        Verify Code
-                    </Button.Text>
+                    <Button.Text color='$white' fontWeight='bold'>{tr("Verify Code")}</Button.Text>
                 </Button>
                 <Button onPress={handleRetry} bg='$secondary' width='100%' rounded>
                     <Button.Icon>
                         <FontAwesomeIcon icon={faArrowRotateRight} color={theme['gray-500'].val} />
                     </Button.Icon>
-                    <Button.Text color='$gray-500' fontWeight='bold'>
-                        Retry
-                    </Button.Text>
+                    <Button.Text color='$gray-500' fontWeight='bold'>{tr("Retry")}</Button.Text>
                 </Button>
             </YStack>
         </SafeAreaView>

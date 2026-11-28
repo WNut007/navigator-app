@@ -10,6 +10,7 @@ import { useAuth } from '../contexts/AuthContext';
 import useAppTheme from '../hooks/use-app-theme';
 import PhoneInput from '../components/PhoneInput';
 import LinearGradient from 'react-native-linear-gradient';
+import { tr } from '../utils/tr';
 
 const PhoneLoginScreen = () => {
     const navigation = useNavigation();
@@ -27,11 +28,11 @@ const PhoneLoginScreen = () => {
         }
 
         if (!isValidPhoneNumber(phone)) {
-            return toast.error('Invalid phone number provided.');
+            return toast.error(tr("Invalid phone number provided."));
         }
 
         if (!password) {
-            return toast.error('Please enter your password.');
+            return toast.error(tr("Please enter your password."));
         }
 
         Keyboard.dismiss();
@@ -56,16 +57,14 @@ const PhoneLoginScreen = () => {
             <LinearGradient colors={['rgba(0, 0, 0, 0.0)', 'rgba(0, 0, 0, 0.4)', 'rgba(0, 0, 0, 0.8)']} style={StyleSheet.absoluteFillObject} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
             <YStack flex={1} alignItems='center' space='$3'>
                 <YStack space='$2' width='100%' px='$5' pt='$5'>
-                    <Text color='$gray-200' fontWeight='bold' fontSize='$8' mb='$3'>
-                        Login
-                    </Text>
+                    <Text color='$gray-200' fontWeight='bold' fontSize='$8' mb='$3'>{tr("Login")}</Text>
                     <PhoneInput value={phone} onChange={(phoneNumber) => setPhone(phoneNumber)} />
                     <Stack position='relative' width='100%'>
                         <Input
                             size='$5'
                             value={password}
                             onChangeText={setPassword}
-                            placeholder='Password'
+                            placeholder={tr("Password")}
                             secureTextEntry={!showPassword}
                             autoCapitalize='none'
                             autoCorrect={false}
@@ -82,9 +81,7 @@ const PhoneLoginScreen = () => {
                     </Stack>
                     <Button size='$5' onPress={handleLogin} bg='$primary' width='100%' opacity={isSigningIn ? 0.75 : 1} disabled={isSigningIn} rounded>
                         <Button.Icon>{isSigningIn ? <Spinner color='$white' /> : <FontAwesomeIcon icon={faRightToBracket} color={'#fff'} />}</Button.Icon>
-                        <Button.Text color='$white' fontWeight='bold'>
-                            Login
-                        </Button.Text>
+                        <Button.Text color='$white' fontWeight='bold'>{tr("Login")}</Button.Text>
                     </Button>
                 </YStack>
 
@@ -97,9 +94,7 @@ const PhoneLoginScreen = () => {
                         <Button.Icon>
                             <FontAwesomeIcon icon={faArrowLeft} color={isDarkMode ? theme['textPrimary'].val : theme['$gray-400'].val} />
                         </Button.Icon>
-                        <Button.Text color={isDarkMode ? theme['textPrimary'].val : theme['$gray-400'].val} fontWeight='bold'>
-                            Home
-                        </Button.Text>
+                        <Button.Text color={isDarkMode ? theme['textPrimary'].val : theme['$gray-400'].val} fontWeight='bold'>{tr("Home")}</Button.Text>
                     </Button>
                 </YStack>
             </YStack>

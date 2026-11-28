@@ -10,6 +10,7 @@ import { useChat } from '../contexts/ChatContext';
 import { useAuth } from '../contexts/AuthContext';
 import useSocketClusterClient from '../hooks/use-socket-cluster-client';
 import ChatParticipantAvatar from '../components/ChatParticipantAvatar';
+import { tr } from '../utils/tr';
 
 const ChatHomeScreen = () => {
     const theme = useTheme();
@@ -151,9 +152,7 @@ const ChatHomeScreen = () => {
         <YStack flex={1} bg='$surface' borderTopWidth={0} borderColor='$borderColor'>
             <XStack bg='$background' alignItems='center' justifyContent='space-between' px='$3' py='$4' borderBottomWidth={1} borderColor='$borderColor'>
                 <YStack>
-                    <Text color='$textPrimary' fontSize={26} fontWeight='bold'>
-                        Chats
-                    </Text>
+                    <Text color='$textPrimary' fontSize={26} fontWeight='bold'>{tr("Chats")}</Text>
                 </YStack>
                 <YStack>
                     <Button onPress={() => navigation.navigate('CreateChatChannel')} circular size='$3' bg='$success' borderWidth={1} borderColor='$successBorder'>

@@ -7,6 +7,7 @@ import { Text } from 'tamagui';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import HeaderButton from '../../components/HeaderButton';
+import { tr } from '../../utils/tr';
 
 export const Boot = {
     screen: BootScreen,
@@ -33,9 +34,7 @@ export const InstanceLink = {
             headerTitle: '',
             presentation: 'modal',
             headerLeft: (props) => (
-                <Text color='$textPrimary' fontSize={20} fontWeight='bold'>
-                    Connection Config
-                </Text>
+                <Text color='$textPrimary' fontSize={20} fontWeight='bold'>{tr("Connection Config")}</Text>
             ),
             headerRight: (props) => <HeaderButton icon={faTimes} onPress={() => navigation.goBack()} />,
             headerStyle: {

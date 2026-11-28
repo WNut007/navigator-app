@@ -8,6 +8,7 @@ import { usePromiseWithLoading } from '../hooks/use-promise-with-loading';
 import BackButton from '../components/BackButton';
 import PhoneInput from '../components/PhoneInput';
 import Input from '../components/Input';
+import { tr } from '../utils/tr';
 
 const RenderAccountProperty = ({ property, value, onChange }) => {
     return (
@@ -59,9 +60,7 @@ const EditAccountPropertyScreen = ({ route }) => {
                 <XStack position='absolute' bottom={0} left={0} right={0} padding='$5'>
                     <Button onPress={handleUpdateProperty} size='$5' bg='$primary' flex={1} opacity={mutated ? 1 : 0.75} disabled={!mutated}>
                         <Button.Icon>{isLoading() && <Spinner color='$textPrimary' />}</Button.Icon>
-                        <Button.Text color='$textPrimary' fontWeight='bold' fontSize='$5'>
-                            Save
-                        </Button.Text>
+                        <Button.Text color='$textPrimary' fontWeight='bold' fontSize='$5'>{tr("Save")}</Button.Text>
                     </Button>
                 </XStack>
             </YStack>

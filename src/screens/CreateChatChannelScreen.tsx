@@ -13,6 +13,7 @@ import { useAuth } from '../contexts/AuthContext';
 import useSocketClusterClient from '../hooks/use-socket-cluster-client';
 import ChatParticipantAvatar from '../components/ChatParticipantAvatar';
 import Spacer from '../components/Spacer';
+import { tr } from '../utils/tr';
 
 const CreateChatChannelScreen = ({ route }) => {
     const theme = useTheme();
@@ -36,7 +37,7 @@ const CreateChatChannelScreen = ({ route }) => {
 
     const handleCreateChat = useCallback(async () => {
         if (!channelName.trim()) {
-            return Alert.alert('Chat channel name is required.');
+            return Alert.alert(tr("Chat channel name is required."));
         }
 
         setIsLoading(true);
@@ -95,14 +96,14 @@ const CreateChatChannelScreen = ({ route }) => {
                                 <Button.Icon>
                                     <FontAwesomeIcon icon={faTimes} color={theme['$errorText'].val} />
                                 </Button.Icon>
-                                <Button.Text color='$errorText'>Unselect</Button.Text>
+                                <Button.Text color='$errorText'>{tr("Unselect")}</Button.Text>
                             </Button>
                         ) : (
                             <Button size='$2' bg='$success' borderWidth={1} borderColor='$successBorder' onPress={() => handleSelectParticipant(participant)}>
                                 <Button.Icon>
                                     <FontAwesomeIcon icon={faCheck} color={theme['$successText'].val} />
                                 </Button.Icon>
-                                <Button.Text color='$successText'>Select</Button.Text>
+                                <Button.Text color='$successText'>{tr("Select")}</Button.Text>
                             </Button>
                         )}
                     </YStack>
@@ -125,21 +126,17 @@ const CreateChatChannelScreen = ({ route }) => {
                                 </Button>
                             </YStack>
                             <YStack>
-                                <Text color='$textPrimary' fontSize={24} fontWeight='bold'>
-                                    Create new Chat
-                                </Text>
+                                <Text color='$textPrimary' fontSize={24} fontWeight='bold'>{tr("Create new Chat")}</Text>
                             </YStack>
                         </XStack>
                     </XStack>
                     <YStack mt='$5' pb='$2'>
                         <YStack px='$3' space='$2'>
-                            <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>
-                                Channel Name
-                            </Text>
+                            <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>{tr("Channel Name")}</Text>
                             <Input
                                 value={channelName}
                                 onChangeText={setChannelName}
-                                placeholder='Input chat channel name...'
+                                placeholder={tr("Input chat channel name...")}
                                 borderWidth={1}
                                 color='$textPrimary'
                                 borderColor='$borderColor'
@@ -149,9 +146,7 @@ const CreateChatChannelScreen = ({ route }) => {
                         </YStack>
                     </YStack>
                     <YStack mt='$4' px='$3' space='$2'>
-                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>
-                            Select Participants:
-                        </Text>
+                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>{tr("Select Participants:")}</Text>
                     </YStack>
                 </YStack>
             </TouchableWithoutFeedback>
@@ -169,7 +164,7 @@ const CreateChatChannelScreen = ({ route }) => {
                 <YStack bg='$background' borderTopWidth={1} borderColor='$borderColorWithShadow' px='$3' py='$4'>
                     <Button size='$5' bg='$success' borderWidth={1} borderColor='$successBorder' onPress={handleCreateChat}>
                         <Button.Icon>{isLoading ? <Spinner /> : <FontAwesomeIcon icon={faSave} color={theme['$successText'].val} />}</Button.Icon>
-                        <Button.Text color='$successText'>Create new Chat</Button.Text>
+                        <Button.Text color='$successText'>{tr("Create new Chat")}</Button.Text>
                     </Button>
                     <Spacer height={25} />
                 </YStack>

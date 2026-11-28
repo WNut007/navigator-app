@@ -18,6 +18,7 @@ import PastOrderCard from '../components/PastOrderCard';
 import AdhocOrderCard from '../components/AdhocOrderCard';
 import Spacer from '../components/Spacer';
 import useStorage from '../hooks/use-storage';
+import { tr } from '../utils/tr';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -188,8 +189,7 @@ const DriverOrderManagementScreen = () => {
         return (
             <YStack>
                 <YStack px='$1'>
-                    <Text color='$textPrimary' fontSize={18} fontWeight='bold'>
-                        Active Orders: {allActiveOrders.length}
+                    <Text color='$textPrimary' fontSize={18} fontWeight='bold'>{tr("Active Orders:")} {allActiveOrders.length}
                     </Text>
                 </YStack>
                 <YStack>
@@ -216,8 +216,7 @@ const DriverOrderManagementScreen = () => {
                 <YStack alignItems='center'>
                     <XStack alignItems='center' bg='$info' borderWidth={1} borderColor='$infoBorder' space='$2' px='$3' py='$2' borderRadius='$5' width='100%' flexWrap='wrap'>
                         <FontAwesomeIcon icon={faInfoCircle} color={theme['$infoText'].val} />
-                        <Text color='$infoText' fontSize={16}>
-                            No current orders for {format(new Date(currentDate), 'yyyy-MM-dd')}
+                        <Text color='$infoText' fontSize={16}>{tr("No current orders for")} {format(new Date(currentDate), 'yyyy-MM-dd')}
                         </Text>
                     </XStack>
                 </YStack>

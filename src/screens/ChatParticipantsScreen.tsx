@@ -12,6 +12,7 @@ import { useAuth } from '../contexts/AuthContext';
 import useSocketClusterClient from '../hooks/use-socket-cluster-client';
 import ChatParticipantAvatar from '../components/ChatParticipantAvatar';
 import BottomSheetSelect from '../components/BottomSheetSelect';
+import { tr } from '../utils/tr';
 
 const ChatParticipantsScreen = ({ route }) => {
     const theme = useTheme();
@@ -54,8 +55,8 @@ const ChatParticipantsScreen = ({ route }) => {
     const handleRemoveParticipant = useCallback(
         (participant) => {
             Alert.alert(
-                'Confirmation',
-                'Are you sure you wish to remove this participant from the chat?',
+                tr("Confirmation"),
+                tr("Are you sure you wish to remove this participant from the chat?"),
                 [
                     {
                         text: 'Cancel',
@@ -127,7 +128,7 @@ const ChatParticipantsScreen = ({ route }) => {
                                     <Button.Icon>
                                         <FontAwesomeIcon icon={faTrash} color={theme['$errorText'].val} />
                                     </Button.Icon>
-                                    <Button.Text color='$errorText'>Remove</Button.Text>
+                                    <Button.Text color='$errorText'>{tr("Remove")}</Button.Text>
                                 </Button>
                             </YStack>
                         )}
@@ -150,9 +151,7 @@ const ChatParticipantsScreen = ({ route }) => {
                             </Button>
                         </YStack>
                         <YStack>
-                            <Text color='$textPrimary' fontSize={24} fontWeight='bold'>
-                                Participants
-                            </Text>
+                            <Text color='$textPrimary' fontSize={24} fontWeight='bold'>{tr("Participants")}</Text>
                         </YStack>
                     </XStack>
                     <YStack>
@@ -160,7 +159,7 @@ const ChatParticipantsScreen = ({ route }) => {
                             <Button.Icon>
                                 <FontAwesomeIcon icon={faPlus} color={theme['$infoText'].val} />
                             </Button.Icon>
-                            <Button.Text color='$infoText'>Add Participant</Button.Text>
+                            <Button.Text color='$infoText'>{tr("Add Participant")}</Button.Text>
                         </Button>
                     </YStack>
                 </XStack>
@@ -201,7 +200,7 @@ const ChatParticipantsScreen = ({ route }) => {
                         </Pressable>
                     );
                 }}
-                title='Select Participant'
+                title={tr("Select Participant")}
                 virtual={true}
                 renderInPlace={false}
                 portalHost='ChatParticipantsPortal'

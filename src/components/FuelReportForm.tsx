@@ -12,6 +12,7 @@ import { getDriverFuelReportStatuses, FuelReportStatus } from '../constants/Enum
 import BottomSheetSelect from '../components/BottomSheetSelect';
 import UnitInput from '../components/UnitInput';
 import MoneyInput from '../components/MoneyInput';
+import { tr } from '../utils/tr';
 
 const FuelReportForm = ({ value = {}, onSubmit, isSubmitting = false, submitText = 'Publish Fuel Report' }) => {
     const theme = useTheme();
@@ -59,16 +60,14 @@ const FuelReportForm = ({ value = {}, onSubmit, isSubmitting = false, submitText
             <YStack flex={1}>
                 <YStack py='$3' space='$4'>
                     <YStack px='$3' space='$2'>
-                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>
-                            Status
-                        </Text>
+                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>{tr("Status")}</Text>
                         <BottomSheetSelect
                             value={fuelReport.status}
                             options={getDriverFuelReportStatuses()}
                             optionLabel='value'
                             optionValue='key'
                             onChange={(value) => handleUpdateFuelReport('status', value)}
-                            title='Select Fuel Report Status'
+                            title={tr("Select Fuel Report Status")}
                             humanize={true}
                             portalHost='FuelReportFormPortal'
                             snapTo='100%'
@@ -76,14 +75,12 @@ const FuelReportForm = ({ value = {}, onSubmit, isSubmitting = false, submitText
                         />
                     </YStack>
                     <YStack px='$3' space='$2'>
-                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>
-                            Odometer
-                        </Text>
+                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>{tr("Odometer")}</Text>
                         <Input
                             value={fuelReport.odometer}
                             onChangeText={(text) => handleUpdateFuelReport('odometer', text)}
                             keyboardType='phone-pad'
-                            placeholder='Input your current odometer...'
+                            placeholder={tr("Input your current odometer...")}
                             borderWidth={1}
                             color='$textPrimary'
                             borderColor='$borderColor'
@@ -92,24 +89,20 @@ const FuelReportForm = ({ value = {}, onSubmit, isSubmitting = false, submitText
                         />
                     </YStack>
                     <YStack px='$3' space='$2'>
-                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>
-                            Volume
-                        </Text>
+                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>{tr("Volume")}</Text>
                         <UnitInput
                             value={fuelReport.volume}
                             onChange={({ value, unit }) => {
                                 handleUpdateFuelReport('volume', value);
                                 handleUpdateFuelReport('metric_unit', unit);
                             }}
-                            placeholder='Input fuel volume...'
+                            placeholder={tr("Input fuel volume...")}
                             portalHost='FuelReportFormPortal'
                             onBottomSheetPositionChanged={setIsBottomSheetPresenting}
                         />
                     </YStack>
                     <YStack px='$3' space='$2'>
-                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>
-                            Cost
-                        </Text>
+                        <Text color='$textPrimary' fontSize={18} fontWeight='bold' px='$1'>{tr("Cost")}</Text>
                         <MoneyInput
                             value={fuelReport.amount}
                             defaultCurrency={fuelReport.currency}
@@ -117,7 +110,7 @@ const FuelReportForm = ({ value = {}, onSubmit, isSubmitting = false, submitText
                                 handleUpdateFuelReport('amount', value);
                                 handleUpdateFuelReport('currency', currency);
                             }}
-                            placeholder='Input fuel costs...'
+                            placeholder={tr("Input fuel costs...")}
                             portalHost='FuelReportFormPortal'
                             onBottomSheetPositionChanged={setIsBottomSheetPresenting}
                         />

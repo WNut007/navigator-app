@@ -5,6 +5,7 @@ import { useConfig } from '../contexts/ConfigContext';
 import { setString } from '../hooks/use-storage';
 import { get } from '../utils';
 import { toast } from '../utils/toast';
+import { tr } from '../utils/tr';
 
 function getUrlParams(url) {
     const params = {};
@@ -45,7 +46,7 @@ const InstanceLinkHandler = ({}) => {
             logout();
 
             // Notify
-            toast.success('Instance link was successful!');
+            toast.success(tr("Instance link was successful!"));
         },
         [logout, setInstanceLinkConfig]
     );

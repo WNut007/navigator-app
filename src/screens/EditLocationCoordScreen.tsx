@@ -9,6 +9,7 @@ import LocationMarker from '../components/LocationMarker';
 import useSavedLocations from '../hooks/use-saved-locations';
 import usePromiseWithLoading from '../hooks/use-promise-with-loading';
 import useFleetbase from '../hooks/use-fleetbase';
+import { tr } from '../utils/tr';
 
 const LOCATION_MARKER_SIZE = { height: 70, width: 40 };
 const styles = StyleSheet.create({
@@ -137,14 +138,10 @@ const EditLocationCoordScreen = ({ route }) => {
             <XStack animate='bouncy' position='absolute' bottom={0} left={0} right={0} padding='$5' zIndex={5} space='$3'>
                 <Button onPress={handleSave} size='$5' bg='$blue-700' flex={1}>
                     <Button.Icon>{isLoading() && <Spinner color='$blue-100' />}</Button.Icon>
-                    <Button.Text color='$blue-100' fontWeight='bold' fontSize='$5'>
-                        Save Position
-                    </Button.Text>
+                    <Button.Text color='$blue-100' fontWeight='bold' fontSize='$5'>{tr("Save Position")}</Button.Text>
                 </Button>
                 <Button onPress={handleReset} size='$5' bg='$secondary' flex={1}>
-                    <Button.Text color='$textSecondary' fontWeight='bold' fontSize='$5'>
-                        Reset
-                    </Button.Text>
+                    <Button.Text color='$textSecondary' fontWeight='bold' fontSize='$5'>{tr("Reset")}</Button.Text>
                 </Button>
             </XStack>
         </YStack>

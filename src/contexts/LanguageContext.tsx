@@ -7,6 +7,7 @@ import useStorage from '../hooks/use-storage';
 import I18n from 'react-native-i18n';
 
 I18n.fallbacks = true;
+I18n.defaultLocale = 'en';
 I18n.translations = {
     ...getAvailableLocales(),
 };
@@ -24,7 +25,7 @@ const LanguageContext = createContext<LanguageContextProps>({
 });
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-    const [locale, setLocaleState] = useStorage<string>('_locale', navigatorConfig('defaultLocale', 'en'));
+    const [locale, setLocaleState] = useStorage<string>('_locale', navigatorConfig('defaultLocale', 'th'));
 
     const languages = Object.keys(I18n.translations).map((code) => {
         return { code, ...getLangNameFromCode(code), emoji: localeEmoji(code) };
@@ -33,6 +34,9 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     const language = useMemo(() => {
         return { code: locale, ...getLangNameFromCode(locale), emoji: localeEmoji(locale) };
     }, [locale]);
+
+    // tr()/t() read I18n.locale during render: set it before the first render, not in an effect
+    I18n.locale = locale;
 
     const setLocale = (newLocale: string) => {
         I18n.locale = newLocale;

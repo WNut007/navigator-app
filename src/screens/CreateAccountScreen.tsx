@@ -11,6 +11,7 @@ import PhoneInput from '../components/PhoneInput';
 import BackButton from '../components/BackButton';
 import Input from '../components/Input';
 import LinearGradient from 'react-native-linear-gradient';
+import { tr } from '../utils/tr';
 
 const CreateAccountScreen = ({ route }) => {
     const params = route.params || {};
@@ -26,7 +27,7 @@ const CreateAccountScreen = ({ route }) => {
         }
 
         if (!isValidPhoneNumber(phone)) {
-            return toast.error('Invalid phone number provided.');
+            return toast.error(tr("Invalid phone number provided."));
         }
 
         try {
@@ -48,19 +49,15 @@ const CreateAccountScreen = ({ route }) => {
                 <YStack width='100%' padding='$5'>
                     <XStack space='$3' alignItems='center' mb='$5'>
                         <BackButton size={40} />
-                        <Text color='$textPrimary' fontWeight='bold' fontSize='$8'>
-                            Create Account
-                        </Text>
+                        <Text color='$textPrimary' fontWeight='bold' fontSize='$8'>{tr("Create Account")}</Text>
                     </XStack>
                     <YStack space='$3'>
-                        <Input value={name} onChangeText={(text) => setName(text)} placeholder='Enter your name' />
+                        <Input value={name} onChangeText={(text) => setName(text)} placeholder={tr("Enter your name")} />
                         <PhoneInput value={phone} onChange={(phoneNumber) => setPhone(phoneNumber)} />
                     </YStack>
                     <Button size='$5' mt='$2' onPress={handleSendVerificationCode} bg='$primary' width='100%' opacity={isSendingCode ? 0.75 : 1} disabled={isSendingCode} rounded>
                         <Button.Icon>{isSendingCode ? <Spinner color='$white' /> : <FontAwesomeIcon icon={faPaperPlane} color={theme.white.val} />}</Button.Icon>
-                        <Button.Text color='$white' fontWeight='bold'>
-                            Send Verification Code
-                        </Button.Text>
+                        <Button.Text color='$white' fontWeight='bold'>{tr("Send Verification Code")}</Button.Text>
                     </Button>
                 </YStack>
 
@@ -70,9 +67,7 @@ const CreateAccountScreen = ({ route }) => {
 
                 <YStack space='$3' width='100%' padding='$5'>
                     <Button size='$5' onPress={handleLogin} bg='$secondary' width='100%' opacity={isSendingCode ? 0.75 : 1} disabled={isSendingCode} rounded>
-                        <Button.Text color='$textPrimary' fontWeight='bold'>
-                            Have an account already? Login
-                        </Button.Text>
+                        <Button.Text color='$textPrimary' fontWeight='bold'>{tr("Have an account already? Login")}</Button.Text>
                     </Button>
                 </YStack>
             </YStack>

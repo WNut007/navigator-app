@@ -15,6 +15,7 @@ import PlaceMapView from './PlaceMapView';
 import Spacer from './Spacer';
 import Badge from './Badge';
 import SafeSpinner from './SafeSpinner';
+import { tr } from '../utils/tr';
 
 const OrderActivitySelect = forwardRef(({ onChange, waypoint, activities = [], snapTo = '100%', isLoading = false, activityLoading, portalHost = 'MainPortal', ...props }, ref) => {
     const theme = useTheme();
@@ -86,7 +87,7 @@ const OrderActivitySelect = forwardRef(({ onChange, waypoint, activities = [], s
                                     space='$2'
                                 >
                                     <FontAwesomeIcon icon={faLightbulb} color={theme['$warningText'].val} />
-                                    <Text color='$warningText'>Requires proof of delivery</Text>
+                                    <Text color='$warningText'>{tr("Requires proof of delivery")}</Text>
                                 </XStack>
                             )}
                         </YStack>
@@ -115,15 +116,11 @@ const OrderActivitySelect = forwardRef(({ onChange, waypoint, activities = [], s
                     <BottomSheetView style={{ flex: 1, backgroundColor: isDarkMode ? theme.surface.val : theme.background.val }}>
                         <YStack>
                             <XStack alignItems='center' justifyContent='space-between' px='$5' mb='$4'>
-                                <Text fontSize='$6' color='$textPrimary' fontWeight='bold'>
-                                    Select activity
-                                </Text>
+                                <Text fontSize='$6' color='$textPrimary' fontWeight='bold'>{tr("Select activity")}</Text>
                             </XStack>
                             {waypoint && (
                                 <YStack px='$3' pt='$4' mb='$4' borderTopWidth={1} borderBottomWidth={1} borderColor='$infoBorder' bg='$info'>
-                                    <Text color='$infoText' fontWeight={17} fontWeight='bold' mb='$2' textTransform='uppercase'>
-                                        Updating activity for:
-                                    </Text>
+                                    <Text color='$infoText' fontWeight={17} fontWeight='bold' mb='$2' textTransform='uppercase'>{tr("Updating activity for:")}</Text>
                                     <WaypointItem
                                         waypoint={waypoint.serialize()}
                                         icon={faLocationDot}

@@ -13,6 +13,7 @@ import OrderWaypointList from './OrderWaypointList';
 import MultipleCustomerAvatars from './MultipleCustomerAvatars';
 import LoadingText from './LoadingText';
 import Badge from './Badge';
+import { tr } from '../utils/tr';
 
 const INFO_FIELD_VALUE_MIN_HEIGHT = 30;
 export const OrderCard = ({ order, onPress }) => {
@@ -97,9 +98,7 @@ export const OrderCard = ({ order, onPress }) => {
                                         </YStack>
                                     </YStack>
                                     <YStack flex={1} gap='$1'>
-                                        <Text color='$textPrimary' fontSize={12}>
-                                            Date Scheduled:
-                                        </Text>
+                                        <Text color='$textPrimary' fontSize={12}>{tr("Date Scheduled:")}</Text>
                                         <YStack minHeight={INFO_FIELD_VALUE_MIN_HEIGHT}>
                                             <LoadingText
                                                 text={order.getAttribute('scheduled_at') ? formatDate(new Date(order.getAttribute('scheduled_at')), 'PP HH:mm') : 'N/A'}
@@ -112,9 +111,7 @@ export const OrderCard = ({ order, onPress }) => {
                                 </YStack>
                                 <YStack flex={1} gap='$2'>
                                     <YStack flex={1} gap='$1'>
-                                        <Text color='$textPrimary' fontSize={12}>
-                                            POD Required:
-                                        </Text>
+                                        <Text color='$textPrimary' fontSize={12}>{tr("POD Required:")}</Text>
                                         <YStack minHeight={INFO_FIELD_VALUE_MIN_HEIGHT}>
                                             <LoadingText
                                                 text={order.getAttribute('pod_required') ? titleize(order.getAttribute('pod_method')) : 'N/A'}
@@ -125,9 +122,7 @@ export const OrderCard = ({ order, onPress }) => {
                                         </YStack>
                                     </YStack>
                                     <YStack flex={1} gap='$1'>
-                                        <Text color='$textPrimary' fontSize={12}>
-                                            Dispatched At:
-                                        </Text>
+                                        <Text color='$textPrimary' fontSize={12}>{tr("Dispatched At:")}</Text>
                                         <YStack minHeight={INFO_FIELD_VALUE_MIN_HEIGHT}>
                                             <LoadingText
                                                 text={order.getAttribute('dispatched_at') ? formatDate(new Date(order.getAttribute('dispatched_at')), 'PP HH:mm') : 'N/A'}
@@ -140,9 +135,7 @@ export const OrderCard = ({ order, onPress }) => {
                                 </YStack>
                                 <YStack flex={1} gap='$2'>
                                     <YStack flex={1} gap='$1'>
-                                        <Text color='$textPrimary' fontSize={12}>
-                                            ETA:
-                                        </Text>
+                                        <Text color='$textPrimary' fontSize={12}>{tr("ETA:")}</Text>
                                         <YStack minHeight={INFO_FIELD_VALUE_MIN_HEIGHT}>
                                             <LoadingText
                                                 text={trackerData.current_destination_eta === -1 ? 'N/A' : formatDuration(trackerData.current_destination_eta)}
@@ -153,9 +146,7 @@ export const OrderCard = ({ order, onPress }) => {
                                         </YStack>
                                     </YStack>
                                     <YStack flex={1} gap='$1'>
-                                        <Text color='$textPrimary' fontSize={12}>
-                                            ECT:
-                                        </Text>
+                                        <Text color='$textPrimary' fontSize={12}>{tr("ECT:")}</Text>
                                         <YStack minHeight={INFO_FIELD_VALUE_MIN_HEIGHT}>
                                             <LoadingText text={trackerData.estimated_completion_time_formatted} numberOfLines={1} color='$textSecondary' fontSize={12} />
                                         </YStack>

@@ -8,6 +8,7 @@ import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { Portal } from '@gorhom/portal';
 import { debounce } from '../utils';
 import { currencies, getCurrency } from '../utils/currencies';
+import { tr } from '../utils/tr';
 
 const MoneyInput = ({
     value: _value,
@@ -179,7 +180,7 @@ const MoneyInput = ({
                     <YStack px='$2'>
                         <BottomSheetTextInput
                             ref={searchInputRef}
-                            placeholder='Search currencies'
+                            placeholder={tr("Search currencies")}
                             onChangeText={setSearchTerm}
                             autoCapitalize='none'
                             autoComplete='off'
