@@ -82,9 +82,10 @@ function createTabScreens() {
     const screens = {
         DriverDashboardTab: {
             screen: DriverDashboardTab,
-            options: {
+            // a function, so the label is translated at render time (an object is built once at startup)
+            options: () => ({
                 tabBarLabel: tr(config('DRIVER_DASHBOARD_TAB_LABEL', 'Dash')),
-            },
+            }),
         },
         DriverTaskTab: {
             screen: DriverTaskTab,

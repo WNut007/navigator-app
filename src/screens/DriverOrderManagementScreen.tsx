@@ -13,6 +13,14 @@ import InsetShadow from 'react-native-inset-shadow';
 import useSocketClusterClient from '../hooks/use-socket-cluster-client';
 import useAppTheme from '../hooks/use-app-theme';
 import CalendarStrip from 'react-native-calendar-strip';
+import moment from 'moment';
+// Bundle moment's Thai locale: the date strip asks moment for 'th' by name, which a Metro bundle can only
+// resolve if the file is imported (else "Requiring unknown module ./locale/th"). Importing a locale makes
+// it moment's global locale, so switch the global back to English; the strip gets its locale via props.
+import 'moment/locale/th';
+moment.locale('en');
+
+const ENGLISH_CALENDAR_LOCALE = { name: 'en', config: {} };
 
 // Thai month/day names for the date strip (moment locale config; years stay C.E.)
 const THAI_CALENDAR_LOCALE = {
@@ -253,7 +261,7 @@ const DriverOrderManagementScreen = () => {
                 borderColor={isDarkMode ? 'transparent' : '$borderColorWithShadow'}
             >
                 <CalendarStrip
-                    locale={isThai() ? THAI_CALENDAR_LOCALE : undefined}
+                    locale={isThai() ? THAI_CALENDAR_LOCALE : ENGLISH_CALENDAR_LOCALE}
                     scrollable
                     ref={calendar}
                     datesWhitelist={datesWhitelist}
