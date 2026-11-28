@@ -69,6 +69,7 @@ export const PastOrderCard = ({ order, onPress }) => {
                             iconColor={theme['$textPrimary'].val}
                             waypoint={destination.serialize()}
                             title='Current Destination'
+                            isLast
                             titleStyle={{ fontWeight: 'bold', fontSize: 14, textTransform: 'uppercase' }}
                         />
                     </YStack>

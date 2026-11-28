@@ -524,7 +524,7 @@ const OrderScreen = ({ route }) => {
                         order={order}
                         zoom={4}
                         // The order header covers the top of the map: keep the stops below it
-                        edgePaddingTop={mapHeaderHeight + 32}
+                        edgePaddingTop={mapHeaderHeight + 56}
                         edgePaddingBottom={30}
                         edgePaddingLeft={30}
                         edgePaddingRight={30}
