@@ -62,26 +62,32 @@ export const WaypointItem: React.FC<WaypointItemProps> = ({
     circleFontColor = '$successText',
     children,
 }) => (
-    <XStack alignItems='center' mb={isLast ? 0 : '$4'} width='100%'>
-        <WaypointCircle
-            number={index}
-            icon={icon}
-            iconSize={iconSize}
-            iconColor={iconColor}
-            backgroundColor={circleBackgroundColor}
-            borderWidth={1}
-            borderColor={circleBorderColor}
-            fontColor={circleFontColor}
-        />
-        <YStack flex={1}>
-            {title && (
-                <Text fontSize='$2' color='$textPrimary' {...titleStyle}>
-                    {title}
+    // ShipCode: the circle is centred on the name + address only; phone and extras sit below,
+    // indented to the text, so a long phone/extra block no longer pulls the circle down
+    <YStack mb={isLast ? 0 : '$4'} width='100%'>
+        <XStack alignItems='center' width='100%'>
+            <WaypointCircle
+                number={index}
+                icon={icon}
+                iconSize={iconSize}
+                iconColor={iconColor}
+                backgroundColor={circleBackgroundColor}
+                borderWidth={1}
+                borderColor={circleBorderColor}
+                fontColor={circleFontColor}
+            />
+            <YStack flex={1}>
+                {title && (
+                    <Text fontSize='$2' color='$textPrimary' {...titleStyle}>
+                        {title}
+                    </Text>
+                )}
+                <Text fontSize='$2' color={title ? '$textSecondary' : '$textPrimary'} textDecorationLine={waypoint.complete ? 'line-through' : 'none'} {...textStyle}>
+                    {waypoint.address}
                 </Text>
-            )}
-            <Text fontSize='$2' color={title ? '$textSecondary' : '$textPrimary'} textDecorationLine={waypoint.complete ? 'line-through' : 'none'} {...textStyle}>
-                {waypoint.address}
-            </Text>
+            </YStack>
+        </XStack>
+        <YStack pl={CIRCLE_SIZE} ml='$3'>
             {waypoint.phone && (
                 <Button onPress={() => onCall(waypoint.phone)} backgroundColor='transparent' padding={0}>
                     <Text fontSize='$2' color='gray' {...textStyle}>
@@ -91,7 +97,7 @@ export const WaypointItem: React.FC<WaypointItemProps> = ({
             )}
             {typeof children === 'function' && children({ waypoint, index })}
         </YStack>
-    </XStack>
+    </YStack>
 );
 
 interface WaypointCollapseButtonProps {

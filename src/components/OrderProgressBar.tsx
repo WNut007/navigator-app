@@ -53,11 +53,14 @@ export const OrderProgressBar: FC<OrderProgressBarProps> = ({ progress, firstWay
         <XStack alignItems='center' my='$2'>
             <WaypointMarker completed={firstWaypointCompleted} />
 
-            <YStack flex={1} position='relative' height={20}>
+            <YStack flex={1} position='relative' height={20} mx='$1'>
                 <DashedLine color={theme.borderColor.val} style={{ position: 'absolute', top: 9, left: 0, right: 0, opacity: 0.6 }} />
                 <YStack position='absolute' width={`${clampedProgress}%`} top={9} left={0} right={0} height={4} bg='$success' />
 
-                <YStack position='absolute' top={0} style={[{ transform: [{ translateX: clampedProgress === 100 ? -10 : -15 }], left: `${clampedProgress}%`, zIndex: 3 }]}>
+                <YStack position='absolute' top={0} style={[
+                        // ShipCode: keep the 34 px truck inside the track (it covered the start marker at 0%)
+                        { transform: [{ translateX: -(clampedProgress / 100) * 34 }], left: `${clampedProgress}%`, zIndex: 3 },
+                    ]}>
                     <YStack
                         marginTop={-6}
                         width={34}
