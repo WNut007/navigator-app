@@ -1,5 +1,5 @@
 import React, { useState, useRef, useMemo, useEffect } from 'react';
-import { StyleSheet, Platform, PixelRatio } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { Text, YStack, XStack, useTheme } from 'tamagui';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBuilding, faTruck } from '@fortawesome/free-solid-svg-icons';
@@ -180,10 +180,9 @@ const LiveOrderRouteMap = ({
 
     const fitToRoute = ({ coordinates }) => {
         if (!mapRef.current || !Array.isArray(coordinates) || coordinates.length === 0) return;
-        // react-native-maps reads edgePadding as physical pixels on Android, as points on iOS
-        const px = (value) => (Platform.OS === 'android' ? PixelRatio.getPixelSizeForLayoutSize(value) : value);
+        // edgePadding is in dp: react-native-maps multiplies it by the screen density on Android
         mapRef.current.fitToCoordinates(coordinates, {
-            edgePadding: { top: px(edgePaddingTop), right: px(edgePaddingRight), bottom: px(edgePaddingBottom), left: px(edgePaddingLeft) },
+            edgePadding: { top: edgePaddingTop, right: edgePaddingRight, bottom: edgePaddingBottom, left: edgePaddingLeft },
             animated: true,
         });
     };
