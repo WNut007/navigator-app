@@ -1,7 +1,8 @@
 import getCurrency from './currencies';
 import countryLocaleMap from 'country-locale-map';
 import { isNone, isArray, isObject, defaults } from './';
-import { isToday, isYesterday, isThisWeek, isThisYear, format, differenceInMinutes, differenceInHours } from 'date-fns';
+import { isToday, isYesterday, isThisWeek, isThisYear, format, differenceInMinutes, differenceInHours } from "./dates";
+import { isThai } from './tr';
 
 export const defaultCurrenyOptions = {
     symbol: '$', // default currency symbol is '$'
@@ -60,12 +61,9 @@ export function formatNumber(number, precision = 2, thousand = ',', decimal = '.
     const mod = base.length > 3 ? base.length % 3 : 0;
 
     // Format the number:
-    return (
-        negative +
-        (mod ? base.substr(0, mod) + opts.thousand : '') +
-        base.substr(mod).replace(/(\d{3})(?=\d)/g, '$1' + opts.thousand) +
-        (usePrecision ? opts.decimal + toFixed(Math.abs(number), usePrecision).split('.')[1] : '')
-    );
+    return (negative +
+    (mod ? base.substr(0, mod) + opts.thousand : '') +
+    base.substr(mod).replace(/(\d{3})(?=\d)/g, '$1' + opts.thousand) + (usePrecision ? opts.decimal + toFixed(Math.abs(number), usePrecision).split('.')[1] : ''));
 }
 
 export function unformat(value, decimal = '') {
@@ -156,13 +154,17 @@ export function formatCurrency(amount = 0, currency = 'USD', currencyDisplay = '
 }
 
 export function formatMeters(meters) {
+    meters = Number(meters);
+    if (!Number.isFinite(meters)) {
+        return '-';
+    }
     if (meters < 1000) {
-        return `${meters} meters`;
+        return `${Math.round(meters)} ${isThai() ? 'ม.' : 'meters'}`;
     } else {
         const km = meters / 1000;
         // Round to one decimal place
         const roundedKm = Math.round(km * 10) / 10;
-        return `${roundedKm} km`;
+        return `${roundedKm} ${isThai() ? 'กม.' : 'km'}`;
     }
 }
 
@@ -290,23 +292,28 @@ export function secondsToTime(secs) {
 }
 
 export function formatDuration(secs) {
+    if (!Number.isFinite(Number(secs))) {
+        return '-';
+    }
     let time = secondsToTime(secs);
     let parts = [];
+    // Thai: "1 ชม. 5 นาที"; English: "1h 5m"
+    const unit = (value, key) => (isThai() ? `${value} ${{ h: 'ชม.', m: 'นาที', s: 'วินาที' }[key]}` : `${value}${key}`);
 
     if (time.h) {
-        parts.push(`${time.h}h`);
+        parts.push(unit(time.h, 'h'));
     }
 
     if (time.m) {
-        parts.push(`${time.m}m`);
+        parts.push(unit(time.m, 'm'));
     }
 
     if (parts.length < 2 && time.s) {
-        parts.push(`${time.s}s`);
+        parts.push(unit(time.s, 's'));
     }
 
     if (parts.length === 0) {
-        parts.push('0s');
+        parts.push(unit(0, 's'));
     }
 
     return parts.join(' ');

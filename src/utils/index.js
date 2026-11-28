@@ -7,9 +7,10 @@ import { themes } from '../../tamagui.config';
 import { APP_THEME_KEY } from '../hooks/use-app-theme';
 import { pluralize } from 'inflected';
 import { countries } from 'countries-list';
-import { parseISO } from 'date-fns';
+import { parseISO } from "./dates";
 import NavigatorConfig from '../../navigator.config';
 import ImageResizer from '@bam.tech/react-native-image-resizer';
+import { tr } from './tr';
 
 // Image.getSize is callback based, so wrap it to be awaitable. Resolves null
 // instead of rejecting so callers can decide how to degrade, matching how the
@@ -487,7 +488,7 @@ export function showActionSheet({ title, message, options, cancelButtonIndex, de
             style: index === cancelButtonIndex ? 'cancel' : index === destructiveButtonIndex ? 'destructive' : 'default',
         }));
 
-        Alert.alert(title || 'Choose an option', message || '', buttons, { cancelable: true });
+        Alert.alert(title || tr('Choose an option'), message || '', buttons, { cancelable: true });
     }
 }
 

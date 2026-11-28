@@ -4,7 +4,7 @@ import { FlatList, RefreshControl, Platform } from 'react-native';
 import { Text, YStack, XStack, Separator, useTheme } from 'tamagui';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { endOfYear, format, startOfYear, subDays } from 'date-fns';
+import { endOfYear, format, startOfYear, subDays } from "../utils/dates";
 import { formatDuration, formatMeters } from '../utils/format';
 import { useOrderManager } from '../contexts/OrderManagerContext';
 import { useNotification } from '../contexts/NotificationContext';
@@ -13,12 +13,24 @@ import InsetShadow from 'react-native-inset-shadow';
 import useSocketClusterClient from '../hooks/use-socket-cluster-client';
 import useAppTheme from '../hooks/use-app-theme';
 import CalendarStrip from 'react-native-calendar-strip';
+
+// Thai month/day names for the date strip (moment locale config; years stay C.E.)
+const THAI_CALENDAR_LOCALE = {
+    name: 'th',
+    config: {
+        months: 'มกราคม_กุมภาพันธ์_มีนาคม_เมษายน_พฤษภาคม_มิถุนายน_กรกฎาคม_สิงหาคม_กันยายน_ตุลาคม_พฤศจิกายน_ธันวาคม'.split('_'),
+        monthsShort: 'ม.ค._ก.พ._มี.ค._เม.ย._พ.ค._มิ.ย._ก.ค._ส.ค._ก.ย._ต.ค._พ.ย._ธ.ค.'.split('_'),
+        weekdays: 'อาทิตย์_จันทร์_อังคาร_พุธ_พฤหัสบดี_ศุกร์_เสาร์'.split('_'),
+        weekdaysShort: 'อา._จ._อ._พ._พฤ._ศ._ส.'.split('_'),
+        weekdaysMin: 'อา._จ._อ._พ._พฤ._ศ._ส.'.split('_'),
+    },
+};
 import OrderCard from '../components/OrderCard';
 import PastOrderCard from '../components/PastOrderCard';
 import AdhocOrderCard from '../components/AdhocOrderCard';
 import Spacer from '../components/Spacer';
 import useStorage from '../hooks/use-storage';
-import { tr } from '../utils/tr';
+import { tr, isThai } from '../utils/tr';
 
 const isAndroid = Platform.OS === 'android';
 
@@ -241,6 +253,7 @@ const DriverOrderManagementScreen = () => {
                 borderColor={isDarkMode ? 'transparent' : '$borderColorWithShadow'}
             >
                 <CalendarStrip
+                    locale={isThai() ? THAI_CALENDAR_LOCALE : undefined}
                     scrollable
                     ref={calendar}
                     datesWhitelist={datesWhitelist}
@@ -266,17 +279,17 @@ const DriverOrderManagementScreen = () => {
             </YStack>
             <YStack bg='$surface' px='$3' py='$4' borderBottomWidth={1} borderTopWidth={0} borderColor={isDarkMode ? '$borderColor' : '$borderColorWithShadow'}>
                 <Text color='$textPrimary' fontSize='$8' fontWeight='bold' mb='$1'>
-                    {todayString} orders
+                    {tr('{day} orders', { day: todayString })}
                 </Text>
                 <XStack space='$2' alignItems='center'>
                     <Text color='$textSecondary' fontSize='$5'>
-                        {currentOrders.length} {currentOrders.length > 1 ? 'orders' : 'order'}
+                        {tr(currentOrders.length === 1 ? '{n} order' : '{n} orders', { n: currentOrders.length })}
                     </Text>
                     <Text color='$textSecondary' fontSize='$5'>
                         •
                     </Text>
                     <Text color='$textSecondary' fontSize='$5'>
-                        {stops} {stops > 1 ? 'stops' : 'stop'} left
+                        {tr(stops === 1 ? '{n} stop left' : '{n} stops left', { n: stops })}
                     </Text>
                     <Text color='$textSecondary' fontSize='$5'>
                         •

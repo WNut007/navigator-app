@@ -95,7 +95,7 @@ const FuelReportScreen = () => {
                     </YStack>
                     <YStack flex={1} alignItems='flex-end'>
                         <Text color='$textPrimary' fontSize={17} numberOfLines={1}>
-                            {fuelReport.vehicle_name ?? 'N/A'}
+                            {fuelReport.vehicle_name ?? tr("N/A")}
                         </Text>
                     </YStack>
                 </XStack>

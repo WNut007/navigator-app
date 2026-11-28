@@ -33,7 +33,7 @@ const DriverDashboardScreen = () => {
                                 <Text color='$textPrimary'>{tr("Tracking:")}</Text>
                             </YStack>
                             <YStack flex={1} alignItems='flex-end'>
-                                <Text color={isTracking ? '$successBorder' : '$textSecondary'}>{isTracking ? 'Yes' : 'No'}</Text>
+                                <Text color={isTracking ? '$successBorder' : '$textSecondary'}>{isTracking ? tr("Yes") : tr("No")}</Text>
                             </YStack>
                         </XStack>
                     </WidgetContainer>
@@ -43,7 +43,7 @@ const DriverDashboardScreen = () => {
                             {['latitude', 'longitude', 'heading', 'altitude'].map((key, index) => {
                                 return (
                                     <YStack key={index} width='45%' overflow='hidden'>
-                                        <Text color='$textSecondary'>{humanize(key)}:</Text>
+                                        <Text color='$textSecondary'>{tr(humanize(key))}:</Text>
                                         <Text color='$textPrimary' numberOfLines={1}>
                                             {get(location, `coords.${key}`)}
                                         </Text>

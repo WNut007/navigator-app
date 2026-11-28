@@ -3,7 +3,7 @@ import { Alert, Image } from 'react-native';
 import { YStack, XStack, Text, Button, TextArea, Spinner, useTheme } from 'tamagui';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faReply, faPenToSquare, faTrash, faSave } from '@fortawesome/free-solid-svg-icons';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from "../utils/dates";
 import useFleetbase from '../hooks/use-fleetbase';
 import { tr } from '../utils/tr';
 

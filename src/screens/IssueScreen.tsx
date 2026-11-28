@@ -94,7 +94,7 @@ const IssueScreen = () => {
                     </YStack>
                     <YStack flex={1} alignItems='flex-end'>
                         <Text color='$textPrimary' fontSize={17} numberOfLines={1}>
-                            {issue.vehicle_name ?? 'N/A'}
+                            {issue.vehicle_name ?? tr("N/A")}
                         </Text>
                     </YStack>
                 </XStack>

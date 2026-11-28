@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { tr } from '../utils/tr';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView, FlatList, Pressable, ScrollView, Platform, Linking } from 'react-native';
 import { Spinner, Avatar, Text, YStack, XStack, Separator, Button, useTheme } from 'tamagui';
@@ -138,7 +139,7 @@ const DriverAccountScreen = () => {
     };
 
     const handleSelectScheme = () => {
-        const options = [...schemes.map((scheme) => titleize(scheme)), t('common.cancel')];
+        const options = [...schemes.map((scheme) => tr(titleize(scheme))), t('common.cancel')];
         showActionSheet({
             options,
             cancelButtonIndex: options.length - 1,
@@ -243,7 +244,7 @@ const DriverAccountScreen = () => {
             onPress: () => navigation.navigate('EditAccountProperty', { property: { name: t('AccountScreen.name'), key: 'name', component: 'input' } }),
         },
         {
-            title: 'Language',
+            title: t('AccountScreen.language'),
             rightComponent: (
                 <Text color='$textSecondary' opacity={0.5}>
                     {language.native}
@@ -255,7 +256,7 @@ const DriverAccountScreen = () => {
             title: t('AccountScreen.theme'),
             rightComponent: (
                 <Text color='$textSecondary' opacity={0.5}>
-                    {titleize(userColorScheme)}
+                    {tr(titleize(userColorScheme))}
                 </Text>
             ),
             onPress: handleSelectScheme,

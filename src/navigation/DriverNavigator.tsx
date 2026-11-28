@@ -20,7 +20,7 @@ import {
 import { useTheme, Text, View, XStack, Image } from 'tamagui';
 import { navigatorConfig, get, config, toArray, getTheme } from '../utils';
 import { configCase } from '../utils/format';
-import { format } from 'date-fns';
+import { format } from "../utils/dates";
 import { PortalHost } from '@gorhom/portal';
 import { useIsNotAuthenticated, useIsAuthenticated } from '../contexts/AuthContext';
 import { useTempStore } from '../contexts/TempStoreContext';
@@ -83,7 +83,7 @@ function createTabScreens() {
         DriverDashboardTab: {
             screen: DriverDashboardTab,
             options: {
-                tabBarLabel: config('DRIVER_DASHBOARD_TAB_LABEL', 'Dash'),
+                tabBarLabel: tr(config('DRIVER_DASHBOARD_TAB_LABEL', 'Dash')),
             },
         },
         DriverTaskTab: {
@@ -92,7 +92,7 @@ function createTabScreens() {
                 const { allActiveOrders } = useOrderManager();
 
                 return {
-                    tabBarLabel: config('DRIVER_ORDER_TAB_LABEL', 'Orders'),
+                    tabBarLabel: tr(config('DRIVER_ORDER_TAB_LABEL', 'Orders')),
                     tabBarBadge: allActiveOrders.length,
                     tabBarBadgeStyle: {
                         marginRight: -5,
@@ -105,7 +105,7 @@ function createTabScreens() {
             screen: DriverReportTab,
             options: () => {
                 return {
-                    tabBarLabel: config('DRIVER_REPORT_TAB_LABEL', 'Reports'),
+                    tabBarLabel: tr(config('DRIVER_REPORT_TAB_LABEL', 'Reports')),
                 };
             },
         },
@@ -115,7 +115,7 @@ function createTabScreens() {
                 const { unreadCount } = useChat();
 
                 return {
-                    tabBarLabel: config('DRIVER_CHAT_TAB_LABEL', 'Chat'),
+                    tabBarLabel: tr(config('DRIVER_CHAT_TAB_LABEL', 'Chat')),
                     tabBarBadge: unreadCount,
                     tabBarBadgeStyle: {
                         marginRight: -5,
@@ -128,7 +128,7 @@ function createTabScreens() {
             screen: DriverAccountTab,
             options: () => {
                 return {
-                    tabBarLabel: config('DRIVER_ACCOUNT_TAB_LABEL', 'Account'),
+                    tabBarLabel: tr(config('DRIVER_ACCOUNT_TAB_LABEL', 'Account')),
                 };
             },
         },

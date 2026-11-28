@@ -28,7 +28,7 @@ const EntityScreen = ({ route }) => {
                 <Separator />
                 <SectionInfoLine title={tr("Tracking Number")} value={entity.tracking_number.tracking_number} />
                 <Separator />
-                <SectionInfoLine title='SKU' value={entity.sku ?? 'N/A'} />
+                <SectionInfoLine title='SKU' value={entity.sku ?? tr("N/A")} />
                 <Separator />
                 <SectionInfoLine title={tr("Type")} value={titleize(entity.type)} />
                 <Separator />

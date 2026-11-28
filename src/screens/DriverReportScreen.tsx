@@ -5,7 +5,7 @@ import { Text, YStack, XStack, Button, Separator, Image, useTheme } from 'tamagu
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
 import { singularize } from 'inflected';
-import { format } from 'date-fns';
+import { format } from "../utils/dates";
 import { titleize, formatCurrency } from '../utils/format';
 import { later } from '../utils';
 import { useAuth } from '../contexts/AuthContext';
@@ -126,22 +126,22 @@ const DriverReportScreen = () => {
                             <YStack gap='$3'>
                                 <XStack gap='$2' px='$3' justifyContent='space-between'>
                                     <Text fontWeight='bold'>{tr("Type:")}</Text>
-                                    <Text numberOfLines={1}>{titleize(issue.type) ?? 'N/A'}</Text>
+                                    <Text numberOfLines={1}>{titleize(issue.type) ?? tr("N/A")}</Text>
                                 </XStack>
                                 <Separator />
                                 <XStack gap='$2' px='$3' justifyContent='space-between'>
                                     <Text fontWeight='bold'>{tr("Category:")}</Text>
-                                    <Text numberOfLines={1}>{titleize(issue.category) ?? 'N/A'}</Text>
+                                    <Text numberOfLines={1}>{titleize(issue.category) ?? tr("N/A")}</Text>
                                 </XStack>
                                 <Separator />
                                 <XStack gap='$2' px='$3' justifyContent='space-between'>
                                     <Text fontWeight='bold'>{tr("Vehicle:")}</Text>
-                                    <Text numberOfLines={1}>{issue.vehicle_name ?? 'N/A'}</Text>
+                                    <Text numberOfLines={1}>{issue.vehicle_name ?? tr("N/A")}</Text>
                                 </XStack>
                                 <Separator />
                                 <XStack gap='$2' px='$3' pb='$2' justifyContent='space-between'>
                                     <Text fontWeight='bold'>{tr("Reporter:")}</Text>
-                                    <Text numberOfLines={1}>{issue.reporter_name ?? 'N/A'}</Text>
+                                    <Text numberOfLines={1}>{issue.reporter_name ?? tr("N/A")}</Text>
                                 </XStack>
                             </YStack>
                         </YStack>
@@ -198,17 +198,17 @@ const DriverReportScreen = () => {
                             <YStack gap='$3'>
                                 <XStack gap='$2' px='$3' justifyContent='space-between'>
                                     <Text fontWeight='bold'>{tr("Odometer:")}</Text>
-                                    <Text numberOfLines={1}>{fuelReport.odometer ?? 'N/A'}</Text>
+                                    <Text numberOfLines={1}>{fuelReport.odometer ?? tr("N/A")}</Text>
                                 </XStack>
                                 <Separator />
                                 <XStack gap='$2' px='$3' justifyContent='space-between'>
                                     <Text fontWeight='bold'>{tr("Volume:")}</Text>
-                                    <Text numberOfLines={1}>{`${fuelReport.volume} ${fuelReport.metric_unit}` ?? 'N/A'}</Text>
+                                    <Text numberOfLines={1}>{`${fuelReport.volume} ${fuelReport.metric_unit}` ?? tr("N/A")}</Text>
                                 </XStack>
                                 <Separator />
                                 <XStack gap='$2' px='$3' pb='$2' justifyContent='space-between'>
                                     <Text fontWeight='bold'>{tr("Cost:")}</Text>
-                                    <Text numberOfLines={1}>{formatCurrency(fuelReport.amount, fuelReport.currency) ?? 'N/A'}</Text>
+                                    <Text numberOfLines={1}>{formatCurrency(fuelReport.amount, fuelReport.currency) ?? tr("N/A")}</Text>
                                 </XStack>
                             </YStack>
                         </YStack>

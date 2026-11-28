@@ -9,7 +9,7 @@ import { PortalHost } from '@gorhom/portal';
 import LaunchNavigator from 'react-native-launch-navigator';
 import FastImage from 'react-native-fast-image';
 import { Order, Place } from '@fleetbase/sdk';
-import { format as formatDate, formatDistance, add } from 'date-fns';
+import { format as formatDate, formatDistance, add } from "../utils/dates";
 import { titleize } from 'inflected';
 import { formatCurrency, formatMeters, formatDuration, smartHumanize } from '../utils/format';
 import { restoreFleetbasePlace, getCoordinates } from '../utils/location';
@@ -262,7 +262,7 @@ const OrderScreen = ({ route }) => {
                 if (errorMessage.startsWith('Order has not been dispatched')) {
                     return Alert.alert(tr("Order Not Dispatched Yet"), tr("This order is not yet dispatched, are you sure you want to continue?"), [
                         {
-                            text: 'Yes',
+                            text: tr("Yes"),
                             onPress: () => {
                                 return startOrder({ skipDispatch: true });
                             },
@@ -290,7 +290,7 @@ const OrderScreen = ({ route }) => {
             if (activity.code === 'dispatched') {
                 return Alert.alert(tr("Warning!"), tr("This order is not yet dispatched, are you sure you want to continue?"), [
                     {
-                        text: 'Yes',
+                        text: tr("Yes"),
                         onPress: async () => {
                             try {
                                 const updatedOrder = await order.updateActivity({ skipDispatch: true });
@@ -529,7 +529,7 @@ const OrderScreen = ({ route }) => {
                         order={order}
                         zoom={4}
                         // The order header covers the top of the map: keep the stops below it
-                        edgePaddingTop={mapHeaderHeight + 56}
+                        edgePaddingTop={mapHeaderHeight + 100}
                         edgePaddingBottom={30}
                         edgePaddingLeft={30}
                         edgePaddingRight={30}
@@ -606,9 +606,9 @@ const OrderScreen = ({ route }) => {
                     <Separator />
                     <SectionInfoLine title={tr("Tracking Number")} value={order.getAttribute('tracking_number.tracking_number')} />
                     <Separator />
-                    <SectionInfoLine title={tr("Proof of Delivery")} value={order.getAttribute('pod_required') ? titleize(order.getAttribute('pod_method')) : 'N/A'} />
+                    <SectionInfoLine title={tr("Proof of Delivery")} value={order.getAttribute('pod_required') ? titleize(order.getAttribute('pod_method')) : tr("N/A")} />
                     <Separator />
-                    <SectionInfoLine title={tr("Type")} value={titleize(order.getAttribute('type'))} />
+                    <SectionInfoLine title={tr("Type")} value={tr(titleize(order.getAttribute('type')))} />
                     <Separator />
                     <SectionInfoLine title={tr("Date Created")} value={formatDate(new Date(order.getAttribute('created_at')), 'PP HH:mm')} />
                     <Separator />
@@ -645,14 +645,14 @@ const OrderScreen = ({ route }) => {
                         <Separator />
                         <SectionInfoLine title={tr("Start Time")} value={trackerData.start_time ? '-' : trackerData.start_time} />
                         <Separator />
-                        <SectionInfoLine title={tr("Current ETA")} value={trackerData.current_destination_eta === -1 ? 'N/A' : formatDuration(trackerData.current_destination_eta)} />
+                        <SectionInfoLine title={tr("Current ETA")} value={trackerData.current_destination_eta === -1 ? tr("N/A") : formatDuration(trackerData.current_destination_eta)} />
                         <Separator />
                         <SectionInfoLine title={tr("ECT")} value={trackerData.estimated_completion_time_formatted} />
                     </YStack>
                 </YStack>
                 <SectionHeader title={tr("Order Notes")} />
                 <YStack px='$3' py='$4'>
-                    <Text color='$textPrimary'>{order.getAttribute('notes', 'N/A') ?? 'N/A'}</Text>
+                    <Text color='$textPrimary'>{order.getAttribute('notes', tr("N/A")) ?? tr("N/A")}</Text>
                 </YStack>
                 <SectionHeader title={tr("Order Proof")} />
                 <YStack>

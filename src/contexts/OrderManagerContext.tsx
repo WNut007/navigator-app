@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from 'tamagui';
-import { format } from 'date-fns';
+import { format } from "../utils/dates";
 import { Order } from '@fleetbase/sdk';
 import { useAuth } from './AuthContext';
 import useFleetbase from '../hooks/use-fleetbase';

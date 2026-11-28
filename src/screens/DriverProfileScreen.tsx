@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
+import { tr } from '../utils/tr';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView, FlatList, Pressable } from 'react-native';
 import { Avatar, Text, YStack, XStack, Separator, useTheme } from 'tamagui';
@@ -54,10 +55,10 @@ const DriverProfileScreen = () => {
 
     const menuItems = useMemo(() => {
         const items = [
-            { id: '1', title: 'Account', screen: 'DriverAccount' },
+            { id: '1', title: tr('Account'), screen: 'DriverAccount' },
             {
                 id: '2',
-                title: 'Organization',
+                title: tr('Organization'),
                 handler: () => handleSelectOrganization(),
                 rightComponent: (
                     <Text color='$textSecondary' fontSize={13} numberOfLines={1}>

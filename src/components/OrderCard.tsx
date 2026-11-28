@@ -4,7 +4,7 @@ import { YStack, XStack, Text, styled, useTheme } from 'tamagui';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faBox } from '@fortawesome/free-solid-svg-icons';
 import { formatDuration, titleize } from '../utils/format';
-import { format as formatDate } from 'date-fns';
+import { format as formatDate } from "../utils/dates";
 import useFleetbase from '../hooks/use-fleetbase';
 import useOrderResource from '../hooks/use-order-resource';
 import useAppTheme from '../hooks/use-app-theme';
@@ -101,7 +101,7 @@ export const OrderCard = ({ order, onPress }) => {
                                         <Text color='$textPrimary' fontSize={12}>{tr("Date Scheduled:")}</Text>
                                         <YStack minHeight={INFO_FIELD_VALUE_MIN_HEIGHT}>
                                             <LoadingText
-                                                text={order.getAttribute('scheduled_at') ? formatDate(new Date(order.getAttribute('scheduled_at')), 'PP HH:mm') : 'N/A'}
+                                                text={order.getAttribute('scheduled_at') ? formatDate(new Date(order.getAttribute('scheduled_at')), 'PP HH:mm') : tr("N/A")}
                                                 numberOfLines={1}
                                                 color='$textSecondary'
                                                 fontSize={12}
@@ -114,7 +114,7 @@ export const OrderCard = ({ order, onPress }) => {
                                         <Text color='$textPrimary' fontSize={12}>{tr("POD Required:")}</Text>
                                         <YStack minHeight={INFO_FIELD_VALUE_MIN_HEIGHT}>
                                             <LoadingText
-                                                text={order.getAttribute('pod_required') ? titleize(order.getAttribute('pod_method')) : 'N/A'}
+                                                text={order.getAttribute('pod_required') ? titleize(order.getAttribute('pod_method')) : tr("N/A")}
                                                 numberOfLines={1}
                                                 color='$textSecondary'
                                                 fontSize={12}
@@ -125,7 +125,7 @@ export const OrderCard = ({ order, onPress }) => {
                                         <Text color='$textPrimary' fontSize={12}>{tr("Dispatched At:")}</Text>
                                         <YStack minHeight={INFO_FIELD_VALUE_MIN_HEIGHT}>
                                             <LoadingText
-                                                text={order.getAttribute('dispatched_at') ? formatDate(new Date(order.getAttribute('dispatched_at')), 'PP HH:mm') : 'N/A'}
+                                                text={order.getAttribute('dispatched_at') ? formatDate(new Date(order.getAttribute('dispatched_at')), 'PP HH:mm') : tr("N/A")}
                                                 numberOfLines={1}
                                                 color='$textSecondary'
                                                 fontSize={12}
@@ -138,7 +138,7 @@ export const OrderCard = ({ order, onPress }) => {
                                         <Text color='$textPrimary' fontSize={12}>{tr("ETA:")}</Text>
                                         <YStack minHeight={INFO_FIELD_VALUE_MIN_HEIGHT}>
                                             <LoadingText
-                                                text={trackerData.current_destination_eta === -1 ? 'N/A' : formatDuration(trackerData.current_destination_eta)}
+                                                text={trackerData.current_destination_eta === -1 ? tr("N/A") : formatDuration(trackerData.current_destination_eta)}
                                                 numberOfLines={1}
                                                 color='$textSecondary'
                                                 fontSize={12}
